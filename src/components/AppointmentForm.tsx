@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
@@ -16,8 +17,10 @@ type Appointment = {
 }
 
 export function AppointmentForm() {
+  const location = useLocation()
   const [step, setStep] = useState<'form' | 'history'>('form')
   const [animating, setAnimating] = useState(false)
+  const [menuAbiertoGlobal, setMenuAbiertoGlobal] = useState(false)
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_phone: '',
@@ -54,6 +57,41 @@ export function AppointmentForm() {
     '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
     '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM',
   ]
+
+  // Leer el parámetro 'servicio' de la URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const servicio = params.get('servicio')
+    if (servicio && ['basico', 'completo', 'encerado', 'tapizado'].includes(servicio)) {
+      setFormData(prev => ({ ...prev, service_type: servicio }))
+    }
+  }, [location])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const tab = params.get('tab')
+    if (tab === 'history') {
+      setStep('history')
+    }
+  }, [location])
+
+  // Escuchar si el menú hamburguesa está abierto
+  useEffect(() => {
+    const handleMenuChange = () => {
+      const overlay = document.querySelector('.menu-overlay')
+      setMenuAbiertoGlobal(!!overlay && window.getComputedStyle(overlay).opacity !== '0')
+    }
+    
+    const observer = new MutationObserver(handleMenuChange)
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true })
+    
+    const interval = setInterval(handleMenuChange, 500)
+    
+    return () => {
+      observer.disconnect()
+      clearInterval(interval)
+    }
+  }, [])
 
   const handleStepChange = (newStep: 'form' | 'history') => {
     if (newStep === step) return
@@ -130,19 +168,48 @@ export function AppointmentForm() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600&family=DM+Sans:wght@400;500&display=swap');
         .af-root{min-height:100vh;background:linear-gradient(135deg,#0a0e1a 0%,#0f1e3a 60%,#0a0e1a 100%);padding:2rem 1rem 4rem;font-family:'DM Sans',sans-serif;}
-        .af-tabs{display:flex;gap:.75rem;margin-bottom:2rem;background:rgba(255,255,255,.04);backdrop-filter:blur(12px);border-radius:16px;padding:.5rem;border:1px solid rgba(255,255,255,.07);}
+        
+        /* TABS STICKY - SE QUEDAN FIJOS AL HACER SCROLL */
+        .af-tabs{
+          display:flex;
+          gap:.75rem;
+          margin-bottom:2rem;
+          background:rgba(255,255,255,.04);
+          backdrop-filter:blur(12px);
+          border-radius:16px;
+          padding:.5rem;
+          border:1px solid rgba(255,255,255,.07);
+          position:sticky;
+          top:70px;
+          transition:all 0.3s ease;
+          z-index:30;
+        }
+        
+        /* Cuando el menú está abierto, los tabs se ocultan */
+        .af-tabs.menu-abierto {
+          z-index: 1;
+          opacity: 0.3;
+          pointer-events: none;
+        }
+        
+        /* Sombra cuando está pegado */
+        .af-tabs.sticky-shadow {
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          background: rgba(10, 14, 26, 0.95);
+        }
+        
         .af-tab{flex:1;padding:.75rem;border-radius:12px;font-weight:500;font-size:.95rem;cursor:pointer;border:none;transition:all .3s;font-family:inherit;}
         .af-tab.active{background:linear-gradient(135deg,#1a6fd4,#0eb8d0);color:#fff;transform:scale(1.02);}
         .af-tab:not(.active){background:transparent;color:rgba(255,255,255,.6);}
         .af-tab:not(.active):hover{background:rgba(255,255,255,.06);color:#fff;}
-        .af-card{background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;max-width:680px;margin:0 auto;}
+        .af-card{background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;max-width:680px;margin:0 auto;position:relative;z-index:10;}
         .af-card-header{background:linear-gradient(135deg,#1a6fd4,#0eb8d0);padding:1.75rem 2rem;text-align:center;}
         .af-card-header h2{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:.3rem;}
         .af-card-header p{font-size:.85rem;color:rgba(255,255,255,.75);}
         .af-body{padding:1.75rem 2rem;}
         .af-label{display:block;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:.5rem;letter-spacing:.03em;}
-        .af-input{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.92rem;font-family:inherit;transition:border-color .2s;outline:none;}
-        .af-input:focus{border-color:#1a6fd4;background:rgba(26,111,212,.08);}
+        .af-input{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.92rem;font-family:inherit;transition:all .2s ease;outline:none;}
+        .af-input:focus{border-color:#1a6fd4;background:rgba(26,111,212,.08);transform:scale(1.01);}
         .af-input option{background:#1a2035;color:#fff;}
         .af-field{margin-bottom:1.25rem;}
         .af-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
@@ -156,15 +223,129 @@ export function AppointmentForm() {
         .af-submit:disabled{opacity:.5;cursor:not-allowed;}
         .af-section-label{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.08em;margin-bottom:.75rem;margin-top:1.5rem;display:block;}
 
-        /* Calendar dark overrides */
-        .af-root .react-calendar{background:#0f1628!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;padding:.75rem!important;color:#fff!important;width:100%!important;}
-        .af-root .react-calendar__tile{color:rgba(255,255,255,.8)!important;border-radius:8px!important;padding:.5rem!important;}
-        .af-root .react-calendar__tile:enabled:hover{background:rgba(26,111,212,.3)!important;}
-        .af-root .react-calendar__tile--active{background:linear-gradient(135deg,#1a6fd4,#0eb8d0)!important;color:#fff!important;}
-        .af-root .react-calendar__navigation button{color:rgba(255,255,255,.8)!important;font-weight:500!important;}
-        .af-root .react-calendar__navigation button:enabled:hover{background:rgba(255,255,255,.08)!important;border-radius:8px!important;}
-        .af-root .react-calendar__month-view__weekdays{color:rgba(255,255,255,.4)!important;font-size:.75rem!important;}
-        .af-root .react-calendar__tile--now{background:rgba(14,184,208,.15)!important;}
+        /* Efecto burbuja para selects */
+        select.af-input {
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230eb8d0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+          background-repeat: no-repeat;
+          background-position: right 1rem center;
+          background-size: 14px;
+        }
+
+        select.af-input:active {
+          animation: bounceSelect 0.3s ease;
+        }
+
+        @keyframes bounceSelect {
+          0% { transform: scale(1); }
+          40% { transform: scale(1.02); }
+          60% { transform: scale(0.99); }
+          100% { transform: scale(1); }
+        }
+
+        /* Efecto hover para el botón Buscar */
+        .af-buscar-btn {
+          background: linear-gradient(135deg, #1a6fd4, #0eb8d0) !important;
+          color: #fff !important;
+          border: none !important;
+          padding: 0.75rem 1.25rem !important;
+          border-radius: 10px !important;
+          cursor: pointer !important;
+          font-weight: 500 !important;
+          font-family: 'DM Sans', sans-serif !important;
+          white-space: nowrap !important;
+          transition: all 0.25s ease !important;
+          box-shadow: 0 0 0 rgba(26, 111, 212, 0) !important;
+        }
+
+        .af-buscar-btn:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 8px 24px rgba(26, 111, 212, 0.5) !important;
+        }
+
+        .af-buscar-btn:active {
+          transform: translateY(0) !important;
+        }
+
+        /* Custom Calendar - Dark & Modern */
+        .custom-calendar {
+          background: linear-gradient(135deg, #0f1628 0%, #0a0e1a 100%) !important;
+          border: 1px solid rgba(26, 111, 212, 0.3) !important;
+          border-radius: 20px !important;
+          padding: 1rem !important;
+          width: 100% !important;
+          max-width: 380px !important;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+          font-family: 'DM Sans', sans-serif !important;
+        }
+
+        .custom-calendar .react-calendar__navigation {
+          margin-bottom: 1.5rem !important;
+        }
+
+        .custom-calendar .react-calendar__navigation button {
+          color: #0eb8d0 !important;
+          font-weight: 600 !important;
+          font-size: 0.9rem !important;
+          background: transparent !important;
+          border-radius: 12px !important;
+          padding: 0.5rem !important;
+          transition: all 0.2s !important;
+        }
+
+        .custom-calendar .react-calendar__navigation button:hover {
+          background: rgba(14, 184, 208, 0.15) !important;
+        }
+
+        .custom-calendar .react-calendar__month-view__weekdays {
+          color: rgba(255, 255, 255, 0.4) !important;
+          font-weight: 500 !important;
+          font-size: 0.75rem !important;
+          text-transform: uppercase !important;
+          margin-bottom: 0.5rem !important;
+        }
+
+        .custom-calendar .react-calendar__month-view__weekdays abbr {
+          text-decoration: none !important;
+        }
+
+        .custom-calendar .react-calendar__tile {
+          color: rgba(255, 255, 255, 0.8) !important;
+          border-radius: 12px !important;
+          padding: 0.7rem 0.5rem !important;
+          font-size: 0.85rem !important;
+          font-weight: 500 !important;
+          transition: all 0.2s !important;
+          background: transparent !important;
+        }
+
+        .custom-calendar .react-calendar__tile:enabled:hover {
+          background: rgba(26, 111, 212, 0.25) !important;
+          transform: scale(1.05) !important;
+        }
+
+        .custom-calendar .react-calendar__tile--active {
+          background: linear-gradient(135deg, #1a6fd4, #0eb8d0) !important;
+          color: white !important;
+          box-shadow: 0 4px 12px rgba(14, 184, 208, 0.3) !important;
+        }
+
+        .custom-calendar .react-calendar__tile--now {
+          background: rgba(14, 184, 208, 0.15) !important;
+          border: 1px solid rgba(14, 184, 208, 0.4) !important;
+          color: #0eb8d0 !important;
+        }
+
+        .custom-calendar .react-calendar__tile--now.react-calendar__tile--active {
+          background: linear-gradient(135deg, #1a6fd4, #0eb8d0) !important;
+          color: white !important;
+        }
+
+        .custom-calendar .react-calendar__tile:disabled {
+          opacity: 0.3 !important;
+          background: transparent !important;
+        }
 
         /* History cards */
         .af-history-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.25rem;margin-bottom:.75rem;transition:border-color .2s;}
@@ -182,13 +363,13 @@ export function AppointmentForm() {
         @keyframes afFadeIn{from{opacity:0}to{opacity:1}}
         @keyframes afScaleIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
 
-        @media(max-width:480px){.af-grid-2{grid-template-columns:1fr;}.af-body{padding:1.25rem;}}
+        @media(max-width:480px){.af-grid-2{grid-template-columns:1fr;}.af-body{padding:1.25rem;}
       `}</style>
 
       <div className="af-root">
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
-          {/* TABS */}
-          <div className="af-tabs">
+          {/* TABS STICKY */}
+          <div className={`af-tabs ${menuAbiertoGlobal ? 'menu-abierto' : ''}`} id="sticky-tabs">
             <button className={`af-tab${step === 'form' ? ' active' : ''}`} onClick={() => handleStepChange('form')}>
               📅 Agendar Cita
             </button>
@@ -244,7 +425,14 @@ export function AppointmentForm() {
                     </div>
 
                     <span className="af-section-label">📅 SELECCIONÁ LA FECHA</span>
-                    <Calendar onChange={(date) => handleDateChange(date as Date)} value={selectedDate} minDate={new Date()} />
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Calendar 
+                        onChange={(date) => handleDateChange(date as Date)} 
+                        value={selectedDate} 
+                        minDate={new Date()} 
+                        className="custom-calendar"
+                      />
+                    </div>
 
                     <span className="af-section-label">⏰ HORARIOS DISPONIBLES</span>
                     {availableTimes.length === 0 ? (
@@ -285,7 +473,7 @@ export function AppointmentForm() {
                 <div className="af-body">
                   <div style={{ display: 'flex', gap: '.75rem', marginBottom: '1.5rem' }}>
                     <input className="af-input" type="tel" placeholder="Ingresá tu número de teléfono" value={phoneToSearch} onChange={(e) => setPhoneToSearch(e.target.value)} style={{ flex: 1 }} />
-                    <button onClick={() => { if (phoneToSearch) { fetchCustomerHistory(phoneToSearch); setShowHistory(true) } }} style={{ background: 'linear-gradient(135deg,#1a6fd4,#0eb8d0)', color: '#fff', border: 'none', padding: '.75rem 1.25rem', borderRadius: 10, cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                    <button onClick={() => { if (phoneToSearch) { fetchCustomerHistory(phoneToSearch); setShowHistory(true) } }} className="af-buscar-btn">
                       Buscar
                     </button>
                   </div>

@@ -1,9 +1,12 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
 export function Home() {
   const navigate = useNavigate()
   const dropsRef = useRef<HTMLDivElement>(null)
+  const [testimonials, setTestimonials] = useState<any[]>([])
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true)
 
   useEffect(() => {
     // Water drops animation
@@ -77,6 +80,34 @@ export function Home() {
     }
   }, [])
 
+  // Cargar testimonios desde Supabase (tabla: testimonials)
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('testimonials')
+          .select('*')
+          .eq('is_approved', true)
+          .order('created_at', { ascending: false })
+          .limit(3)
+        
+        if (error) {
+          console.error('Error cargando testimonios:', error)
+          setTestimonials([])
+        } else if (data && data.length > 0) {
+          setTestimonials(data)
+        } else {
+          setTestimonials([])
+        }
+      } catch (err) {
+        console.error('Error:', err)
+        setTestimonials([])
+      }
+      setLoadingTestimonials(false)
+    }
+    fetchTestimonials()
+  }, [])
+
   return (
     <>
       <style>{`
@@ -131,10 +162,26 @@ export function Home() {
         .lc-section-title { font-size:2.2rem;font-weight:600;margin-bottom:.8rem;line-height:1.2; }
         .lc-section-sub { color:rgba(255,255,255,.5);font-size:.95rem;line-height:1.75;max-width:520px; }
 
+        /* Servicios Grid */
         .lc-services-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem;margin-top:3rem; }
-        .lc-service-card { background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.75rem;transition:all .35s;position:relative;overflow:hidden;cursor:pointer; }
+        
+        /* Tarjetas de servicios con efecto hover mejorado */
+        .lc-service-card { 
+          background:#111827;
+          border:1px solid rgba(255,255,255,.07);
+          border-radius:16px;
+          padding:1.75rem;
+          transition:all .35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+          position:relative;
+          overflow:hidden;
+          cursor:pointer;
+        }
         .lc-service-card::before { content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,111,212,.09),transparent);opacity:0;transition:opacity .3s; }
-        .lc-service-card:hover { border-color:rgba(14,184,208,.35);transform:translateY(-4px); }
+        .lc-service-card:hover { 
+          border-color:rgba(14,184,208,.5);
+          transform:translateY(-8px) scale(1.02);
+          box-shadow:0 20px 30px -15px rgba(0,0,0,0.5);
+        }
         .lc-service-card:hover::before { opacity:1; }
         .lc-svc-icon { font-size:2.2rem;margin-bottom:1rem; }
         .lc-svc-name { font-family:'Sora',sans-serif;font-size:1rem;font-weight:500;margin-bottom:.4rem; }
@@ -153,10 +200,30 @@ export function Home() {
         .lc-booking-visual { background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;text-align:center; }
         .lc-big-icon { font-size:5rem;display:block;margin-bottom:1rem;animation:lcFloatIcon 3s ease-in-out infinite; }
 
+        /* Quick Links Grid - Tarjetas de EXPLORA */
         .lc-ql-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:3rem; }
-        .lc-ql-card { background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:2rem;color:#fff;transition:all .3s;display:flex;flex-direction:column;gap:.75rem;position:relative;overflow:hidden;cursor:pointer; }
+        
+        /* Tarjetas de EXPLORA con efecto hover mejorado */
+        .lc-ql-card { 
+          background:#111827;
+          border:1px solid rgba(255,255,255,.07);
+          border-radius:18px;
+          padding:2rem;
+          color:#fff;
+          transition:all .35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+          display:flex;
+          flex-direction:column;
+          gap:.75rem;
+          position:relative;
+          overflow:hidden;
+          cursor:pointer;
+        }
         .lc-ql-card::after { content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1a6fd4,#0eb8d0);opacity:0;transition:opacity .3s; }
-        .lc-ql-card:hover { transform:translateY(-3px);border-color:rgba(14,184,208,.25); }
+        .lc-ql-card:hover { 
+          transform:translateY(-8px) scale(1.02);
+          border-color:rgba(14,184,208,.4);
+          box-shadow:0 20px 30px -15px rgba(0,0,0,0.5);
+        }
         .lc-ql-card:hover::after { opacity:1; }
         .lc-ql-icon { font-size:2rem; }
         .lc-ql-title { font-family:'Sora',sans-serif;font-size:1rem;font-weight:500; }
@@ -164,28 +231,34 @@ export function Home() {
         .lc-ql-arrow { margin-top:auto;color:#0eb8d0;font-size:.82rem; }
 
         .lc-feat-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:3rem; }
-        .lc-feat-card { background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.5rem;transition:border-color .3s; }
-        .lc-feat-card:hover { border-color:rgba(26,111,212,.4); }
+        .lc-feat-card { background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.5rem;transition:all .3s ease; }
+        .lc-feat-card:hover { border-color:rgba(26,111,212,.4);transform:translateY(-5px); }
         .lc-feat-icon { font-size:1.6rem;margin-bottom:.75rem; }
         .lc-feat-title { font-family:'Sora',sans-serif;font-size:.9rem;font-weight:500;margin-bottom:.4rem; }
         .lc-feat-desc { font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5; }
 
+        /* Reviews Grid - Tarjetas de opiniones */
         .lc-reviews-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem; }
-        .lc-review { background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.75rem;transition:border-color .3s; }
-        .lc-review:hover { border-color:rgba(255,255,255,.15); }
+        
+        /* Tarjetas de opiniones con efecto hover mejorado */
+        .lc-review { 
+          background:#111827;
+          border:1px solid rgba(255,255,255,.07);
+          border-radius:16px;
+          padding:1.75rem;
+          transition:all .35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .lc-review:hover { 
+          transform:translateY(-6px);
+          border-color:rgba(14,184,208,.3);
+          box-shadow:0 15px 25px -12px rgba(0,0,0,0.4);
+        }
         .lc-stars { color:#f59e0b;font-size:1rem;margin-bottom:1rem; }
         .lc-review-text { font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:1.25rem;font-style:italic; }
         .lc-reviewer { display:flex;align-items:center;gap:.75rem; }
         .lc-avatar { width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a6fd4,#0eb8d0);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600; }
         .lc-rev-name { font-size:.88rem;font-weight:500; }
         .lc-rev-date { font-size:.74rem;color:rgba(255,255,255,.35); }
-
-        .lc-contact-section { padding:5rem 2rem;background:#060a14;border-top:1px solid rgba(255,255,255,.07); }
-        .lc-contact-inner { max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start; }
-        .lc-info-card { display:flex;align-items:center;gap:1rem;background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem; }
-        .lc-info-icon { font-size:1.4rem; }
-        .lc-info-label { font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:.2rem;letter-spacing:.04em; }
-        .lc-info-value { font-size:.9rem; }
 
         .lc-footer { background:#060a14;border-top:1px solid rgba(255,255,255,.06);padding:3rem 2rem;text-align:center; }
         .lc-footer-logo { font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:600;margin-bottom:.4rem; }
@@ -212,6 +285,21 @@ export function Home() {
         @keyframes lcScrollBounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(5px)} }
         @keyframes lcFloatIcon { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-10px) rotate(4deg)} }
 
+        /* Animaciones para el CTA */
+        @keyframes lcCarFloat {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        @keyframes lcCarGlow {
+          0%, 100% { filter: drop-shadow(0 5px 15px rgba(14,184,208,0.3)); }
+          50% { filter: drop-shadow(0 5px 25px rgba(14,184,208,0.6)); }
+        }
+        @keyframes lcLineMove {
+          0% { transform: translateX(-10px); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateX(10px); opacity: 0; }
+        }
+
         @media(max-width:768px) {
           .lc-nav-links,.lc-nav-cta{display:none;}
           .lc-hero h1{font-size:2.2rem;}
@@ -220,6 +308,40 @@ export function Home() {
           .lc-booking{padding:2.5rem 1.5rem;}
           .lc-section{padding:4rem 1.25rem;}
           .lc-hours-card{scale:0.9;}
+        }
+          /* EFECTOS HOVER MEJORADOS - FORZADOS */
+        .lc-service-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+        }
+        .lc-service-card:hover {
+          transform: translateY(-10px) scale(1.02) !important;
+          box-shadow: 0 20px 30px -10px rgba(0,0,0,0.5) !important;
+          border-color: rgba(14,184,208,0.5) !important;
+        }
+
+        .lc-ql-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+        }
+        .lc-ql-card:hover {
+          transform: translateY(-10px) scale(1.02) !important;
+          box-shadow: 0 20px 30px -10px rgba(0,0,0,0.5) !important;
+          border-color: rgba(14,184,208,0.4) !important;
+        }
+
+        .lc-review {
+          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+        }
+        .lc-review:hover {
+          transform: translateY(-8px) !important;
+          box-shadow: 0 15px 25px -10px rgba(0,0,0,0.4) !important;
+          border-color: rgba(14,184,208,0.3) !important;
+        }
+
+        .lc-feat-card {
+          transition: transform 0.3s ease !important;
+        }
+        .lc-feat-card:hover {
+          transform: translateY(-5px) !important;
         }
       `}</style>
 
@@ -310,7 +432,7 @@ export function Home() {
           </div>
         </div>
 
-                <section id="servicios">
+        <section id="servicios">
           <div className="lc-section">
             <div className="lc-reveal">
               <span className="lc-tag">NUESTROS SERVICIOS</span>
@@ -319,12 +441,12 @@ export function Home() {
             </div>
             <div className="lc-services-grid">
               {[
-                { icon: '🚿', name: 'Lavado Básico', price: '$10', desc: 'Lavado exterior con agua a presión, shampoo especial y secado manual.', time: '30 min' },
-                { icon: '✨', name: 'Lavado Completo', price: '$20', desc: 'Interior y exterior. Aspirado, tablero, vidrios y limpieza de llantas.', time: '45 min' },
-                { icon: '🌟', name: 'Encerado + Lavado', price: '$35', desc: 'Lavado completo más encerado profesional para proteger y dar brillo a la pintura.', time: '60 min' },
-                { icon: '🧼', name: 'Limpieza de Tapizado', price: '$25', desc: 'Limpieza profunda de asientos y alfombras con extractora profesional.', time: '40 min' },
+                { icon: '🚿', name: 'Lavado Básico', value: 'basico', price: '$10', desc: 'Lavado exterior con agua a presión, shampoo especial y secado manual.', time: '30 min' },
+                { icon: '✨', name: 'Lavado Completo', value: 'completo', price: '$20', desc: 'Interior y exterior. Aspirado, tablero, vidrios y limpieza de llantas.', time: '45 min' },
+                { icon: '🌟', name: 'Encerado + Lavado', value: 'encerado', price: '$35', desc: 'Lavado completo más encerado profesional para proteger y dar brillo a la pintura.', time: '60 min' },
+                { icon: '🧼', name: 'Limpieza de Tapizado', value: 'tapizado', price: '$25', desc: 'Limpieza profunda de asientos y alfombras con extractora profesional.', time: '40 min' },
               ].map((s) => (
-                <div key={s.name} className="lc-service-card lc-reveal" onClick={() => navigate('/agendar')}>
+                <div key={s.name} className="lc-service-card lc-reveal" onClick={() => navigate(`/agendar?servicio=${s.value}`)}>
                   <div className="lc-svc-icon">{s.icon}</div>
                   <div className="lc-svc-name">{s.name}</div>
                   <div className="lc-svc-price">{s.price}</div>
@@ -375,23 +497,27 @@ export function Home() {
               <p className="lc-section-sub">Más de 500 clientes satisfechos en Guanacaste confían en nosotros.</p>
             </div>
             <div className="lc-reviews-grid">
-              {[
-                { initials: 'MG', name: 'María González', date: 'Hace 2 semanas', text: 'Excelente servicio. Mi Toyota quedó como nuevo. El encerado duró más de lo esperado y el precio es muy justo.' },
-                { initials: 'CR', name: 'Carlos Rodríguez', date: 'Hace 1 mes', text: 'Super fácil agendar. Llegué a mi hora y en 40 minutos mi camioneta estaba impecable. Vuelvo seguro.' },
-                { initials: 'AL', name: 'Andrea López', date: 'Hace 3 semanas', text: 'Tienen el mejor tapizado de la zona. Lo limpian a fondo, huele increíble y los asientos quedan perfectos.' },
-              ].map((r, idx) => (
-                <div key={r.name} className={`lc-review lc-reveal lc-d${(idx % 3) + 1}`}>
-                  <div className="lc-stars">★★★★★</div>
-                  <div className="lc-review-text">"{r.text}"</div>
-                  <div className="lc-reviewer">
-                    <div className="lc-avatar">{r.initials}</div>
-                    <div>
-                      <div className="lc-rev-name">{r.name}</div>
-                      <div className="lc-rev-date">{r.date}</div>
+              {loadingTestimonials ? (
+                <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem' }}>Cargando opiniones...</div>
+              ) : testimonials.length === 0 ? (
+                <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem', color: 'rgba(255,255,255,.5)' }}>
+                  No hay opiniones aún. ¡Sé el primero en opinar!
+                </div>
+              ) : (
+                testimonials.map((testimonial, idx) => (
+                  <div key={testimonial.id} className={`lc-review lc-reveal lc-d${(idx % 3) + 1}`}>
+                    <div className="lc-stars">{"★".repeat(testimonial.rating || 5)}</div>
+                    <div className="lc-review-text">"{testimonial.comment}"</div>
+                    <div className="lc-reviewer">
+                      <div className="lc-avatar">{testimonial.customer_name?.charAt(0) || 'C'}</div>
+                      <div>
+                        <div className="lc-rev-name">{testimonial.customer_name || 'Cliente'}</div>
+                        <div className="lc-rev-date">{new Date(testimonial.created_at).toLocaleDateString('es-CR')}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div style={{ textAlign: 'center', marginTop: '2.5rem' }} className="lc-reveal">
               <button className="lc-btn-outline" onClick={() => navigate('/opiniones')}>Ver todas las opiniones</button>
@@ -409,10 +535,8 @@ export function Home() {
             <div className="lc-ql-grid">
               {[
                 { icon: '📅', title: 'Agendar Cita', desc: 'Reservá tu espacio y elegí el servicio que necesitás.', arrow: 'Reservar ahora', action: '/agendar' },
-                { icon: '📋', title: 'Mis Citas', desc: 'Consultá tus citas agendadas con tu número de teléfono.', arrow: 'Consultar citas', action: '/agendar' },
-                { icon: '🛍️', title: 'Productos', desc: 'Catálogo de productos de limpieza para tu vehículo.', arrow: 'Ver catálogo', action: '/productos' },
-                { icon: '📍', title: 'Ubicación', desc: 'Bagaces, Guanacaste. Fácil de llegar y con estacionamiento.', arrow: 'Ver en mapa', action: '/contacto' },
-                { icon: '📱', title: 'Contacto', desc: 'WhatsApp, teléfono o correo. Respondemos rápido.', arrow: 'Contactar', action: '/contacto' },
+                { icon: '📋', title: 'Mis Citas', desc: 'Consultá tus citas agendadas con tu número de teléfono.', arrow: 'Consultar citas', action: '/agendar?tab=history' },
+                { icon: '📞', title: 'Contacto', desc: 'WhatsApp, teléfono o correo. Respondemos rápido.', arrow: 'Contactar', action: '/contacto' },
                 { icon: '⭐', title: 'Opiniones', desc: 'Lo que dicen nuestros clientes sobre su experiencia.', arrow: 'Ver opiniones', action: '/opiniones' },
               ].map((ql) => (
                 <div key={ql.title} className="lc-ql-card lc-reveal" onClick={() => navigate(ql.action)}>
@@ -427,49 +551,219 @@ export function Home() {
         </section>
 
         {/* CONTACTO */}
-        <section id="contacto" className="lc-contact-section">
-          <div className="lc-contact-inner lc-reveal">
-            <div>
+        <section id="contacto" style={{ padding: '5rem 2rem', background: '#0a0e1a', borderTop: '1px solid rgba(255,255,255,.06)' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+            <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
               <span className="lc-tag">CONTACTO</span>
-              <h2 className="lc-section-title" style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>Hablemos</h2>
-              <div className="lc-info-card">
-                <span className="lc-info-icon">📍</span>
-                <div>
-                  <div className="lc-info-label">DIRECCIÓN</div>
-                  <div className="lc-info-value">Bagaces, Guanacaste, Costa Rica</div>
-                </div>
-              </div>
-              <div className="lc-info-card">
-                <span className="lc-info-icon">📱</span>
-                <div>
-                  <div className="lc-info-label">WHATSAPP</div>
-                  <div className="lc-info-value" style={{ color: '#25d366' }}>+506 1234-5678</div>
-                </div>
-              </div>
-              <div className="lc-info-card">
-                <span className="lc-info-icon">✉️</span>
-                <div>
-                  <div className="lc-info-label">CORREO</div>
-                  <div className="lc-info-value">lavacar@gmail.com</div>
-                </div>
-              </div>
-              <div className="lc-info-card">
-                <span className="lc-info-icon">⏰</span>
-                <div>
-                  <div className="lc-info-label">HORARIO</div>
-                  <div className="lc-info-value">Lun–Sáb: 8am–6pm</div>
-                </div>
-              </div>
+              <h2 className="lc-section-title" style={{ fontSize: '1.8rem' }}>Hablemos</h2>
+              <p className="lc-section-sub" style={{ margin: '0 auto' }}>Estamos aquí para ayudarte</p>
             </div>
-            <div className="lc-reveal">
-              <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,.07)', borderRadius: 20, padding: '2.5rem', textAlign: 'center' }}>
-                <span className="lc-big-icon">🚗</span>
-                <h3 style={{ fontFamily: "'Sora',sans-serif", fontSize: '1.3rem', fontWeight: 500, marginBottom: '.5rem' }}>¿Listo para que tu auto brille?</h3>
-                <p style={{ fontSize: '.85rem', color: 'rgba(255,255,255,.4)', marginBottom: '1.5rem', lineHeight: 1.6 }}>Agendá tu cita ahora y disfrutá un vehículo impecable.</p>
-                <button className="lc-btn-primary" style={{ width: '100%', padding: '1rem' }} onClick={() => navigate('/agendar')}>
-                  Agendar mi cita ahora
-                </button>
-                <div style={{ marginTop: '.75rem', fontSize: '.74rem', color: 'rgba(255,255,255,.22)' }}>Sin tarjeta · Sin registro requerido</div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              {/* Columna izquierda - Información de contacto + Mapa */}
+              <div>
+                <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden', marginBottom: '1.5rem' }}>
+                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '1rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+                    <p style={{ fontSize: '0.8rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>INFORMACIÓN DE CONTACTO</p>
+                  </div>
+                  <div style={{ padding: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1.2rem' }}>📍</span>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>DIRECCIÓN</div>
+                        <div style={{ fontSize: '0.9rem', color: '#fff' }}>Bagaces, Guanacaste, Costa Rica</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(37,211,102,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1.2rem' }}>📱</span>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>WHATSAPP</div>
+                        <div style={{ fontSize: '0.9rem', color: '#25d366' }}>+506 1234-5678</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1.2rem' }}>✉️</span>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>CORREO</div>
+                        <div style={{ fontSize: '0.9rem', color: '#0eb8d0' }}>lavacar@gmail.com</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1.2rem' }}>⏰</span>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>HORARIO</div>
+                        <div style={{ fontSize: '0.9rem', color: '#fff' }}>Lunes a Sábado: 8am - 6pm</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden' }}>
+                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '1rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+                    <p style={{ fontSize: '0.8rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>UBICACIÓN</p>
+                  </div>
+                  <div style={{ padding: '1rem' }}>
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15716.123456789!2d-85.2548091!3d10.5218901!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDMxJzE4LjgiTiA4NcKwMTUnMTcuMyJX!5e0!3m2!1ses!2scr!4v1234567890"
+                      width="100%"
+                      height="200"
+                      style={{ border: 0, borderRadius: '12px' }}
+                      allowFullScreen
+                      loading="lazy"
+                      title="Google Maps"
+                    />
+                    <button
+                      onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218901,-85.2548091', '_blank')}
+                      style={{ width: '100%', marginTop: '0.8rem', background: 'rgba(14,184,208,.15)', color: '#0eb8d0', border: '1px solid rgba(14,184,208,.3)', padding: '0.7rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 500, transition: 'all .2s' }}
+                    >
+                      🗺️ Abrir en Google Maps
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Columna derecha - CTA Grande con efectos */}
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ 
+                  background: 'linear-gradient(135deg, #111827, #0f172a)', 
+                  border: '1px solid rgba(14,184,208,.2)', 
+                  borderRadius: '20px', 
+                  padding: '2rem', 
+                  textAlign: 'center', 
+                  height: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  justifyContent: 'center',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 30px -10px rgba(14,184,208,.1)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)'
+                  e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(14,184,208,.2)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 10px 30px -10px rgba(14,184,208,.1)'
+                }}>
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '180px',
+                    height: '180px',
+                    background: 'radial-gradient(circle, rgba(14,184,208,.15) 0%, transparent 70%)',
+                    borderRadius: '50%',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  <div style={{ 
+                    fontSize: '6rem', 
+                    marginBottom: '1rem', 
+                    display: 'inline-block',
+                    animation: 'lcCarFloat 2s ease-in-out infinite, lcCarGlow 3s ease-in-out infinite',
+                    filter: 'drop-shadow(0 10px 15px rgba(14,184,208,0.3))',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.animation = 'lcCarFloat 0.5s ease-in-out infinite'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.animation = 'lcCarFloat 2s ease-in-out infinite, lcCarGlow 3s ease-in-out infinite'
+                  }}>
+                    🚗
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} style={{
+                        width: '20px',
+                        height: '2px',
+                        background: 'linear-gradient(90deg, #0eb8d0, transparent)',
+                        animation: `lcLineMove 1.5s ease-in-out infinite`,
+                        animationDelay: `${i * 0.15}s`,
+                        opacity: 0.6
+                      }} />
+                    ))}
+                  </div>
+                  
+                  <h3 style={{ 
+                    fontFamily: "'Sora',sans-serif", 
+                    fontSize: '1.6rem', 
+                    marginBottom: '0.75rem', 
+                    color: '#fff',
+                    background: 'linear-gradient(135deg, #fff, #0eb8d0)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    ¿Listo para que tu auto brille?
+                  </h3>
+                  
+                  <p style={{ 
+                    fontSize: '0.9rem', 
+                    color: 'rgba(255,255,255,.6)', 
+                    marginBottom: '1.5rem', 
+                    lineHeight: 1.5,
+                    maxWidth: '280px',
+                    marginLeft: 'auto',
+                    marginRight: 'auto'
+                  }}>
+                    Agendá tu cita ahora y disfrutá un vehículo impecable.
+                  </p>
+                  
+                  <button 
+                    style={{ 
+                      background: 'linear-gradient(135deg, #1a6fd4, #0eb8d0)', 
+                      color: '#fff', 
+                      border: 'none', 
+                      padding: '1rem', 
+                      borderRadius: '12px', 
+                      cursor: 'pointer', 
+                      fontWeight: 600, 
+                      width: '100%', 
+                      fontSize: '1rem', 
+                      transition: 'all 0.3s ease',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 15px rgba(14,184,208,0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.02)'
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(14,184,208,0.5)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)'
+                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(14,184,208,0.3)'
+                    }}
+                    onClick={() => navigate('/agendar')}
+                  >
+                    <span style={{ position: 'relative', zIndex: 2 }}>📅 Agendar mi cita ahora</span>
+                  </button>
+                  
+                  <div style={{ 
+                    fontSize: '0.7rem', 
+                    color: 'rgba(255,255,255,.3)', 
+                    marginTop: '1rem',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '1rem'
+                  }}>
+                    <span>✓ Sin tarjeta</span>
+                    <span>✓ Sin registro</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -482,7 +776,6 @@ export function Home() {
           <div className="lc-footer-links">
             <button onClick={() => navigate('/agendar')}>Agendar</button>
             <button onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}>Servicios</button>
-            <button onClick={() => navigate('/productos')}>Productos</button>
             <button onClick={() => navigate('/contacto')}>Contacto</button>
             <button onClick={() => navigate('/opiniones')}>Opiniones</button>
           </div>

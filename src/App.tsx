@@ -9,7 +9,6 @@ import { Opiniones } from './components/Opiniones'
 import { useState, useEffect } from 'react'
 
 function NavBar() {
-  const [showLocationModal, setShowLocationModal] = useState(false)
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [scrolling, setScrolling] = useState(false)
 
@@ -30,6 +29,18 @@ function NavBar() {
   const handleMenuClick = () => {
     setMenuAbierto(false)
   }
+
+  // Prevenir scroll cuando el menú está abierto
+  useEffect(() => {
+    if (menuAbierto) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [menuAbierto])
 
   return (
     <>
@@ -71,11 +82,11 @@ function NavBar() {
             </button>
           </div>
 
-          {/* Menú desplegable con animación */}
-          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            menuAbierto ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          {/* Menú desplegable con animación - AHORA CON FONDO Y TAPA EL CONTENIDO */}
+          <div className={`fixed top-16 left-0 right-0 bg-gradient-to-b from-blue-600 to-blue-800 shadow-2xl z-40 transition-all duration-300 ease-in-out ${
+            menuAbierto ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
           }`}>
-            <div className="py-3 space-y-1 border-t border-white/20">
+            <div className="py-4 space-y-1 max-w-6xl mx-auto px-4">
               <a 
                 href="/" 
                 onClick={handleMenuClick}
@@ -93,14 +104,6 @@ function NavBar() {
                 <span className="font-medium">Agendar Cita</span>
               </a>
               <a 
-                href="/productos" 
-                onClick={handleMenuClick}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-200 transform hover:translate-x-1 group"
-              >
-                <span className="text-xl group-hover:scale-110 transition-transform">🛍️</span>
-                <span className="font-medium">Productos</span>
-              </a>
-              <a 
                 href="/contacto" 
                 onClick={handleMenuClick}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-200 transform hover:translate-x-1 group"
@@ -116,6 +119,7 @@ function NavBar() {
                 <span className="text-xl group-hover:scale-110 transition-transform">⭐</span>
                 <span className="font-medium">Opiniones</span>
               </a>
+<<<<<<< Updated upstream
               <a 
                 href="/login" 
                 onClick={handleMenuClick}
@@ -134,14 +138,25 @@ function NavBar() {
                 <span className="text-xl group-hover:scale-110 transition-transform">📍</span>
                 <span className="font-medium">Ubicación</span>
               </button>
+=======
+>>>>>>> Stashed changes
             </div>
           </div>
         </div>
       </nav>
 
+      {/* Fondo oscuro que tapa el contenido cuando el menú está abierto */}
+      <div 
+        className={`fixed inset-0 bg-black bg-opacity-50 z-35 transition-all duration-300 ${
+          menuAbierto ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`}
+        onClick={() => setMenuAbierto(false)}
+      />
+
       {/* Espaciador para que el contenido no quede debajo del navbar fijo */}
       <div className="h-16"></div>
 
+<<<<<<< Updated upstream
       {/* MODAL DE UBICACIÓN MEJORADO */}
       {showLocationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
@@ -211,6 +226,8 @@ function NavBar() {
         </div>
       )}
 
+=======
+>>>>>>> Stashed changes
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; }
@@ -251,12 +268,6 @@ function App() {
             <>
               <NavBar />
               <AppointmentForm />
-            </>
-          } />
-          <Route path="/productos" element={
-            <>
-              <NavBar />
-              <ProductCatalog />
             </>
           } />
           <Route path="/contacto" element={
