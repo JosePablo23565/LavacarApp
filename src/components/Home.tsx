@@ -368,14 +368,14 @@ export function Home() {
           <button className="lc-nav-cta" onClick={() => navigate('/agendar')}>Agendar cita</button>
         </nav>
 
-        <section className="lc-hero">
+          <section className="lc-hero">
           <div className="lc-hero-bg" />
           <div className="lc-grid" />
           <div className="lc-glow" />
           <div ref={dropsRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
           <span className="lc-car-bg">🚗</span>
 
-          <div className="lc-hero-content">
+          <div className="lc-hero-content" style={{ paddingBottom: '3rem' }}>
             <div className="lc-badge">
               <div className="lc-dot" style={{ width: 7, height: 7 }} />
               Bagaces, Guanacaste — Costa Rica
@@ -383,7 +383,7 @@ export function Home() {
             <h1>Tu auto <span>merece</span><br />el mejor cuidado</h1>
             <p>Lavado profesional, encerado y limpieza de tapizado.<br />Agendá tu cita en segundos y olvidate del resto.</p>
             
-            <div className="lc-hours-card">
+            <div className="lc-hours-card" style={{ marginBottom: '2rem' }}>
               <div className="lc-hours-item">
                 <span className="lc-hours-icon">⏰</span>
                 <div>
@@ -401,13 +401,13 @@ export function Home() {
               </div>
             </div>
 
-            <div className="lc-hero-btns">
+            <div className="lc-hero-btns" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
               <button className="lc-btn-primary" onClick={() => navigate('/agendar')}>Agendar mi cita ahora</button>
               <button className="lc-btn-outline" onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}>Ver servicios</button>
             </div>
           </div>
 
-          <div className="lc-scroll-ind">
+          <div className="lc-scroll-ind" style={{ bottom: '0.5rem' }}>
             <span>DESLIZAR</span>
             <div className="lc-scroll-arrow" />
           </div>
@@ -494,7 +494,6 @@ export function Home() {
             <div className="lc-reveal">
               <span className="lc-tag">OPINIONES</span>
               <h2 className="lc-section-title">Lo que dicen nuestros clientes</h2>
-              <p className="lc-section-sub">Más de 500 clientes satisfechos en Guanacaste confían en nosotros.</p>
             </div>
             <div className="lc-reviews-grid">
               {loadingTestimonials ? (
@@ -550,7 +549,7 @@ export function Home() {
           </div>
         </section>
 
-        {/* CONTACTO */}
+                {/* CONTACTO - Responsive: en móvil se ordena verticalmente */}
         <section id="contacto" style={{ padding: '5rem 2rem', background: '#0a0e1a', borderTop: '1px solid rgba(255,255,255,.06)' }}>
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>
             <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
@@ -559,56 +558,172 @@ export function Home() {
               <p className="lc-section-sub" style={{ margin: '0 auto' }}>Estamos aquí para ayudarte</p>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            {/* Grid responsive - en móvil se apila verticalmente */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+              gap: '1.5rem'
+            }}>
               {/* Columna izquierda - Información de contacto + Mapa */}
               <div>
+                {/* Información de contacto */}
                 <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden', marginBottom: '1.5rem' }}>
-                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '1rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
-                    <p style={{ fontSize: '0.8rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>INFORMACIÓN DE CONTACTO</p>
+                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '0.8rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+                    <p style={{ fontSize: '0.75rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>INFORMACIÓN DE CONTACTO</p>
                   </div>
-                  <div style={{ padding: '1.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.2rem' }}>📍</span>
+                  <div style={{ padding: '1.25rem' }}>
+                    {/* Dirección - con animación al hover */}
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.8rem', 
+                        marginBottom: '1rem',
+                        padding: '0.5rem',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        background: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(14,184,208,0.1)'
+                        e.currentTarget.style.transform = 'translateX(5px)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.transform = 'translateX(0)'
+                      }}
+                      onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Bagaces+Guanacaste+Costa+Rica', '_blank')}
+                    >
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
+                        <span style={{ fontSize: '1.1rem' }}>📍</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>DIRECCIÓN</div>
-                        <div style={{ fontSize: '0.9rem', color: '#fff' }}>Bagaces, Guanacaste, Costa Rica</div>
+                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>DIRECCIÓN</div>
+                        <div style={{ fontSize: '0.85rem', color: '#fff' }}>Bagaces, Guanacaste, Costa Rica</div>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(37,211,102,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.2rem' }}>📱</span>
+                    
+                    {/* WhatsApp - con enlace funcional */}
+                    <a 
+                      href="https://wa.me/50612345678"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.8rem', 
+                        marginBottom: '1rem',
+                        padding: '0.5rem',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        background: 'transparent',
+                        textDecoration: 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(37,211,102,0.1)'
+                        e.currentTarget.style.transform = 'translateX(5px)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.transform = 'translateX(0)'
+                      }}
+                    >
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(37,211,102,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
+                        <span style={{ fontSize: '1.1rem' }}>📱</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>WHATSAPP</div>
-                        <div style={{ fontSize: '0.9rem', color: '#25d366' }}>+506 1234-5678</div>
+                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>WHATSAPP</div>
+                        <div style={{ fontSize: '0.85rem', color: '#25d366' }}>+506 1234-5678</div>
                       </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.2rem' }}>✉️</span>
+                    </a>
+                    
+                    {/* Correo - con enlace funcional */}
+                    <a 
+                      href="mailto:lavacar@gmail.com"
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.8rem', 
+                        marginBottom: '1rem',
+                        padding: '0.5rem',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        background: 'transparent',
+                        textDecoration: 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(14,184,208,0.1)'
+                        e.currentTarget.style.transform = 'translateX(5px)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.transform = 'translateX(0)'
+                      }}
+                    >
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
+                        <span style={{ fontSize: '1.1rem' }}>✉️</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>CORREO</div>
-                        <div style={{ fontSize: '0.9rem', color: '#0eb8d0' }}>lavacar@gmail.com</div>
+                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>CORREO</div>
+                        <div style={{ fontSize: '0.85rem', color: '#0eb8d0' }}>lavacar@gmail.com</div>
                       </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.2rem' }}>⏰</span>
+                    </a>
+                    
+                    {/* Horario - con animación */}
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.8rem',
+                        padding: '0.5rem',
+                        borderRadius: '12px',
+                        transition: 'all 0.3s ease',
+                        background: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(14,184,208,0.1)'
+                        e.currentTarget.style.transform = 'translateX(5px)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.transform = 'translateX(0)'
+                      }}
+                    >
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
+                        <span style={{ fontSize: '1.1rem' }}>⏰</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>HORARIO</div>
-                        <div style={{ fontSize: '0.9rem', color: '#fff' }}>Lunes a Sábado: 8am - 6pm</div>
+                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>HORARIO</div>
+                        <div style={{ fontSize: '0.85rem', color: '#fff' }}>Lunes a Sábado: 8am - 6pm</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden' }}>
-                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '1rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
-                    <p style={{ fontSize: '0.8rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>UBICACIÓN</p>
+                {/* Mapa - con animación al hover */}
+                <div 
+                  style={{ 
+                    background: '#111827', 
+                    border: '1px solid rgba(255,255,255,.08)', 
+                    borderRadius: '20px', 
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-3px)'
+                    e.currentTarget.style.borderColor = 'rgba(14,184,208,0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,.08)'
+                  }}
+                >
+                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '0.8rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+                    <p style={{ fontSize: '0.75rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>UBICACIÓN</p>
                   </div>
                   <div style={{ padding: '1rem' }}>
                     <iframe
@@ -622,7 +737,27 @@ export function Home() {
                     />
                     <button
                       onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218901,-85.2548091', '_blank')}
-                      style={{ width: '100%', marginTop: '0.8rem', background: 'rgba(14,184,208,.15)', color: '#0eb8d0', border: '1px solid rgba(14,184,208,.3)', padding: '0.7rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 500, transition: 'all .2s' }}
+                      style={{ 
+                        width: '100%', 
+                        marginTop: '0.75rem', 
+                        background: 'rgba(14,184,208,.15)', 
+                        color: '#0eb8d0', 
+                        border: '1px solid rgba(14,184,208,.3)', 
+                        padding: '0.6rem', 
+                        borderRadius: '12px', 
+                        cursor: 'pointer', 
+                        fontWeight: 500, 
+                        fontSize: '0.85rem', 
+                        transition: 'all .2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(14,184,208,.25)'
+                        e.currentTarget.style.color = '#fff'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(14,184,208,.15)'
+                        e.currentTarget.style.color = '#0eb8d0'
+                      }}
                     >
                       🗺️ Abrir en Google Maps
                     </button>
@@ -630,7 +765,7 @@ export function Home() {
                 </div>
               </div>
               
-              {/* Columna derecha - CTA Grande con efectos */}
+              {/* Columna derecha - CTA con carro flotante */}
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <div style={{ 
                   background: 'linear-gradient(135deg, #111827, #0f172a)', 
@@ -674,10 +809,11 @@ export function Home() {
                     display: 'inline-block',
                     animation: 'lcCarFloat 2s ease-in-out infinite, lcCarGlow 3s ease-in-out infinite',
                     filter: 'drop-shadow(0 10px 15px rgba(14,184,208,0.3))',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'animation 0.1s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.animation = 'lcCarFloat 0.5s ease-in-out infinite'
+                    e.currentTarget.style.animation = 'lcCarFloat 0.3s ease-in-out infinite, lcCarGlow 0.5s ease-in-out infinite'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.animation = 'lcCarFloat 2s ease-in-out infinite, lcCarGlow 3s ease-in-out infinite'
@@ -749,7 +885,7 @@ export function Home() {
                     }}
                     onClick={() => navigate('/agendar')}
                   >
-                    <span style={{ position: 'relative', zIndex: 2 }}>📅 Agendar mi cita ahora</span>
+                    📅 Agendar mi cita ahora
                   </button>
                   
                   <div style={{ 
@@ -768,7 +904,7 @@ export function Home() {
             </div>
           </div>
         </section>
-
+        
         {/* FOOTER */}
         <footer className="lc-footer">
           <div className="lc-footer-logo">🚗 Lavacar Pro</div>
@@ -779,7 +915,7 @@ export function Home() {
             <button onClick={() => navigate('/contacto')}>Contacto</button>
             <button onClick={() => navigate('/opiniones')}>Opiniones</button>
           </div>
-          <div className="lc-footer-copy">© 2025 Lavacar Pro · Todos los derechos reservados</div>
+          <div className="lc-footer-copy">© {new Date().getFullYear()} Lavacar Pro · Todos los derechos reservados</div>
         </footer>
       </div>
     </>
