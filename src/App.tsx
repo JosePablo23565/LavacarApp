@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Home } from './components/Home'
 import { AppointmentForm } from './components/AppointmentForm'
 import { AdminLogin } from './pages/AdminLogin'
 import { AdminDashboard } from './pages/AdminDashboard'
@@ -80,8 +81,16 @@ function NavBar() {
                 onClick={handleMenuClick}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-200 transform hover:translate-x-1 group"
               >
+                <span className="text-xl group-hover:scale-110 transition-transform">🏠</span>
+                <span className="font-medium">Inicio</span>
+              </a>
+              <a 
+                href="/agendar" 
+                onClick={handleMenuClick}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-200 transform hover:translate-x-1 group"
+              >
                 <span className="text-xl group-hover:scale-110 transition-transform">📅</span>
-                <span className="font-medium">Agendar</span>
+                <span className="font-medium">Agendar Cita</span>
               </a>
               <a 
                 href="/productos" 
@@ -232,7 +241,11 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-100">
         <Routes>
-          <Route path="/" element={
+          {/* Home como página principal (sin NavBar porque ya tiene su propio diseño) */}
+          <Route path="/" element={<Home />} />
+          
+          {/* Rutas con NavBar */}
+          <Route path="/agendar" element={
             <>
               <NavBar />
               <AppointmentForm />

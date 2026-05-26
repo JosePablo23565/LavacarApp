@@ -34,17 +34,11 @@ export function AppointmentForm() {
   const [showHistory, setShowHistory] = useState(false)
   const [phoneToSearch, setPhoneToSearch] = useState('')
   const [successData, setSuccessData] = useState<{
-    show: boolean
-    name: string
-    date: string
-    time: string
-    service: string
-    vehicleType: string
-    vehicleModel: string
+    show: boolean; name: string; date: string; time: string; service: string; vehicleType: string; vehicleModel: string
   }>({ show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' })
 
   const services = [
-    { value: 'basico', label: '🚗 Lavado Básico', price: '$10', duration: 30 },
+    { value: 'basico', label: '🚿 Lavado Básico', price: '$10', duration: 30 },
     { value: 'completo', label: '✨ Lavado Completo', price: '$20', duration: 45 },
     { value: 'encerado', label: '🌟 Encerado + Lavado', price: '$35', duration: 60 },
     { value: 'tapizado', label: '🧼 Limpieza de Tapizado', price: '$25', duration: 40 },
@@ -56,25 +50,22 @@ export function AppointmentForm() {
     { value: 'camioneta', label: '🚐 Camioneta / SUV', icon: '🚐' },
   ]
 
+  const allTimes = [
+    '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+    '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM',
+  ]
+
   const handleStepChange = (newStep: 'form' | 'history') => {
     if (newStep === step) return
     setAnimating(true)
-    setTimeout(() => {
-      setStep(newStep)
-      setTimeout(() => setAnimating(false), 100)
-    }, 200)
+    setTimeout(() => { setStep(newStep); setTimeout(() => setAnimating(false), 100) }, 200)
   }
 
   const convertTo24Hour = (time12h: string) => {
     const [time, modifier] = time12h.split(' ')
     let [hours, minutes] = time.split(':')
-    
-    if (modifier === 'PM' && hours !== '12') {
-      hours = String(parseInt(hours) + 12)
-    }
-    if (modifier === 'AM' && hours === '12') {
-      hours = '00'
-    }
+    if (modifier === 'PM' && hours !== '12') hours = String(parseInt(hours) + 12)
+    if (modifier === 'AM' && hours === '12') hours = '00'
     return `${hours}:${minutes}:00`
   }
 
@@ -86,47 +77,18 @@ export function AppointmentForm() {
     return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`
   }
 
-  const allTimes = [
-    '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-    '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM'
-  ]
-
-  useEffect(() => {
-    if (selectedDate) {
-      fetchAvailableTimes()
-    }
-  }, [selectedDate])
+  useEffect(() => { if (selectedDate) fetchAvailableTimes() }, [selectedDate])
 
   const fetchAvailableTimes = async () => {
     const dateStr = selectedDate.toISOString().split('T')[0]
-    
-    const { data } = await supabase
-      .from('appointments')
-      .select('appointment_time')
-      .eq('appointment_date', dateStr)
-
-    const bookedTimes24h = data?.map(a => a.appointment_time) || []
-    const bookedTimes12h = bookedTimes24h.map(t => convertTo12Hour(t))
-    
-    const available = allTimes.filter(time => !bookedTimes12h.includes(time))
-    setAvailableTimes(available)
+    const { data } = await supabase.from('appointments').select('appointment_time').eq('appointment_date', dateStr)
+    const bookedTimes12h = (data?.map((a) => a.appointment_time) || []).map((t) => convertTo12Hour(t))
+    setAvailableTimes(allTimes.filter((time) => !bookedTimes12h.includes(time)))
   }
 
   const fetchCustomerHistory = async (phone: string) => {
-    const { data } = await supabase
-      .from('appointments')
-      .select('*')
-      .eq('customer_phone', phone)
-      .order('appointment_date', { ascending: false })
-    
+    const { data } = await supabase.from('appointments').select('*').eq('customer_phone', phone).order('appointment_date', { ascending: false })
     setCustomerHistory(data || [])
-  }
-
-  const handleSearchHistory = () => {
-    if (phoneToSearch) {
-      fetchCustomerHistory(phoneToSearch)
-      setShowHistory(true)
-    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -135,438 +97,271 @@ export function AppointmentForm() {
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date)
-    const formattedDate = date.toISOString().split('T')[0]
-    setFormData({ ...formData, appointment_date: formattedDate, appointment_time: '' })
+    setFormData({ ...formData, appointment_date: date.toISOString().split('T')[0], appointment_time: '' })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.appointment_time) { alert('Por favor seleccioná una hora'); return }
     setLoading(true)
-
-    if (!formData.appointment_date) {
-      alert('Por favor selecciona una fecha')
-      setLoading(false)
-      return
-    }
-
-    if (!formData.appointment_time) {
-      alert('Por favor selecciona una hora')
-      setLoading(false)
-      return
-    }
-
-    const time24h = convertTo24Hour(formData.appointment_time)
-    
-    const dataToSave = {
-      ...formData,
-      appointment_time: time24h
-    }
-
-    const { error } = await supabase.from('appointments').insert([dataToSave])
-
+    const { error } = await supabase.from('appointments').insert([{ ...formData, appointment_time: convertTo24Hour(formData.appointment_time) }])
     if (error) {
       alert('Error: ' + error.message)
-      setLoading(false)
     } else {
-      const selectedService = services.find(s => s.value === formData.service_type)
-      const selectedVehicle = vehicleTypes.find(v => v.value === formData.vehicle_type)
-      
-      setSuccessData({
-        show: true,
-        name: formData.customer_name,
-        date: formData.appointment_date,
-        time: formData.appointment_time,
-        service: selectedService?.label || formData.service_type,
-        vehicleType: selectedVehicle?.label || formData.vehicle_type,
-        vehicleModel: formData.vehicle_model
-      })
-      
-      setFormData({
-        customer_name: '',
-        customer_phone: '',
-        service_type: '',
-        vehicle_type: '',
-        vehicle_model: '',
-        appointment_date: new Date().toISOString().split('T')[0],
-        appointment_time: '',
-      })
+      const svc = services.find((s) => s.value === formData.service_type)
+      const veh = vehicleTypes.find((v) => v.value === formData.vehicle_type)
+      setSuccessData({ show: true, name: formData.customer_name, date: formData.appointment_date, time: formData.appointment_time, service: svc?.label || formData.service_type, vehicleType: veh?.label || formData.vehicle_type, vehicleModel: formData.vehicle_model })
+      setFormData({ customer_name: '', customer_phone: '', service_type: '', vehicle_type: '', vehicle_model: '', appointment_date: new Date().toISOString().split('T')[0], appointment_time: '' })
       setSelectedDate(new Date())
       fetchAvailableTimes()
-      
-      setTimeout(() => {
-        setSuccessData({ show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' })
-      }, 5000)
+      setTimeout(() => setSuccessData({ show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' }), 6000)
     }
     setLoading(false)
   }
 
-  const selectedService = services.find(s => s.value === formData.service_type)
+  const selectedService = services.find((s) => s.value === formData.service_type)
 
-  const formatDateForDisplay = (date: string) => {
-    return new Date(date).toLocaleDateString('es-CR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
-  const formatDateSimple = (date: string) => {
-    return new Date(date).toLocaleDateString('es-CR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
-  const getVehicleIcon = (type: string) => {
-    const vehicle = vehicleTypes.find(v => v.value === type)
-    return vehicle?.icon || '🚗'
-  }
+  const formatDateDisplay = (date: string) => new Date(date).toLocaleDateString('es-CR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  const formatDateSimple = (date: string) => new Date(date).toLocaleDateString('es-CR', { year: 'numeric', month: 'long', day: 'numeric' })
+  const getVehicleIcon = (type: string) => vehicleTypes.find((v) => v.value === type)?.icon || '🚗'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-100 to-blue-100 py-4 px-3 md:py-8 md:px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Tabs con animación */}
-        <div className="flex gap-2 md:gap-3 mb-6 md:mb-8 bg-white/60 backdrop-blur-md rounded-2xl p-1.5 md:p-2 shadow-lg">
-          <button
-            onClick={() => handleStepChange('form')}
-            className={`flex-1 py-2.5 md:py-3 rounded-xl font-bold text-sm md:text-lg transition-all duration-300 transform ${
-              step === 'form' 
-                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg scale-105' 
-                : 'bg-white/50 text-gray-700 hover:bg-white/70'
-            }`}
-          >
-            📅 Agendar Cita
-          </button>
-          <button
-            onClick={() => handleStepChange('history')}
-            className={`flex-1 py-2.5 md:py-3 rounded-xl font-bold text-sm md:text-lg transition-all duration-300 transform ${
-              step === 'history' 
-                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg scale-105' 
-                : 'bg-white/50 text-gray-700 hover:bg-white/70'
-            }`}
-          >
-            📋 Mis Citas
-          </button>
-        </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600&family=DM+Sans:wght@400;500&display=swap');
+        .af-root{min-height:100vh;background:linear-gradient(135deg,#0a0e1a 0%,#0f1e3a 60%,#0a0e1a 100%);padding:2rem 1rem 4rem;font-family:'DM Sans',sans-serif;}
+        .af-tabs{display:flex;gap:.75rem;margin-bottom:2rem;background:rgba(255,255,255,.04);backdrop-filter:blur(12px);border-radius:16px;padding:.5rem;border:1px solid rgba(255,255,255,.07);}
+        .af-tab{flex:1;padding:.75rem;border-radius:12px;font-weight:500;font-size:.95rem;cursor:pointer;border:none;transition:all .3s;font-family:inherit;}
+        .af-tab.active{background:linear-gradient(135deg,#1a6fd4,#0eb8d0);color:#fff;transform:scale(1.02);}
+        .af-tab:not(.active){background:transparent;color:rgba(255,255,255,.6);}
+        .af-tab:not(.active):hover{background:rgba(255,255,255,.06);color:#fff;}
+        .af-card{background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;max-width:680px;margin:0 auto;}
+        .af-card-header{background:linear-gradient(135deg,#1a6fd4,#0eb8d0);padding:1.75rem 2rem;text-align:center;}
+        .af-card-header h2{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:.3rem;}
+        .af-card-header p{font-size:.85rem;color:rgba(255,255,255,.75);}
+        .af-body{padding:1.75rem 2rem;}
+        .af-label{display:block;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:.5rem;letter-spacing:.03em;}
+        .af-input{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.92rem;font-family:inherit;transition:border-color .2s;outline:none;}
+        .af-input:focus{border-color:#1a6fd4;background:rgba(26,111,212,.08);}
+        .af-input option{background:#1a2035;color:#fff;}
+        .af-field{margin-bottom:1.25rem;}
+        .af-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+        .af-hint{font-size:.75rem;color:rgba(255,255,255,.3);margin-top:.4rem;}
+        .af-time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;}
+        .af-time-btn{padding:.6rem;border-radius:10px;font-size:.82rem;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.1);transition:all .2s;font-family:inherit;background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);}
+        .af-time-btn.sel{background:linear-gradient(135deg,#1a6fd4,#0eb8d0);border-color:transparent;color:#fff;transform:scale(1.04);}
+        .af-time-btn:not(.sel):hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;}
+        .af-submit{width:100%;padding:1rem;background:linear-gradient(135deg,#1a6fd4,#0eb8d0);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;transition:all .25s;margin-top:1.5rem;}
+        .af-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,111,212,.4);}
+        .af-submit:disabled{opacity:.5;cursor:not-allowed;}
+        .af-section-label{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.08em;margin-bottom:.75rem;margin-top:1.5rem;display:block;}
 
-        <div className={`transition-all duration-300 ease-in-out ${
-          animating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-        }`}>
-          {/* Formulario de agendar */}
-          {step === 'form' && (
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              <div className="relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
-                  {[...Array(12)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute rounded-full bg-blue-200/60 animate-bubble"
-                      style={{
-                        width: `${Math.random() * 80 + 20}px`,
-                        height: `${Math.random() * 80 + 20}px`,
-                        left: `${Math.random() * 100}%`,
-                        bottom: `-${Math.random() * 50}px`,
-                        animationDelay: `${Math.random() * 5}s`,
-                        animationDuration: `${Math.random() * 8 + 4}s`,
-                      }}
-                    />
-                  ))}
+        /* Calendar dark overrides */
+        .af-root .react-calendar{background:#0f1628!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;padding:.75rem!important;color:#fff!important;width:100%!important;}
+        .af-root .react-calendar__tile{color:rgba(255,255,255,.8)!important;border-radius:8px!important;padding:.5rem!important;}
+        .af-root .react-calendar__tile:enabled:hover{background:rgba(26,111,212,.3)!important;}
+        .af-root .react-calendar__tile--active{background:linear-gradient(135deg,#1a6fd4,#0eb8d0)!important;color:#fff!important;}
+        .af-root .react-calendar__navigation button{color:rgba(255,255,255,.8)!important;font-weight:500!important;}
+        .af-root .react-calendar__navigation button:enabled:hover{background:rgba(255,255,255,.08)!important;border-radius:8px!important;}
+        .af-root .react-calendar__month-view__weekdays{color:rgba(255,255,255,.4)!important;font-size:.75rem!important;}
+        .af-root .react-calendar__tile--now{background:rgba(14,184,208,.15)!important;}
+
+        /* History cards */
+        .af-history-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.25rem;margin-bottom:.75rem;transition:border-color .2s;}
+        .af-history-card:hover{border-color:rgba(14,184,208,.3);}
+        .af-confirmed{display:inline-flex;align-items:center;gap:.3rem;background:rgba(16,185,129,.1);color:#34d399;border:1px solid rgba(16,185,129,.2);padding:.3rem .75rem;border-radius:999px;font-size:.74rem;font-weight:500;}
+
+        /* Success modal */
+        .af-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:1.5rem;animation:afFadeIn .25s ease;}
+        .af-modal{background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:2.5rem;max-width:440px;width:100%;animation:afScaleIn .2s ease;}
+        .af-modal-icon{width:72px;height:72px;background:linear-gradient(135deg,#1a6fd4,#0eb8d0);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;}
+        .af-modal-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.88rem;}
+        .af-modal-row:last-of-type{border-bottom:none;}
+        .af-modal-key{color:rgba(255,255,255,.45);}
+        .af-modal-val{font-weight:500;color:#fff;}
+        @keyframes afFadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes afScaleIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+
+        @media(max-width:480px){.af-grid-2{grid-template-columns:1fr;}.af-body{padding:1.25rem;}}
+      `}</style>
+
+      <div className="af-root">
+        <div style={{ maxWidth: 680, margin: '0 auto' }}>
+          {/* TABS */}
+          <div className="af-tabs">
+            <button className={`af-tab${step === 'form' ? ' active' : ''}`} onClick={() => handleStepChange('form')}>
+              📅 Agendar Cita
+            </button>
+            <button className={`af-tab${step === 'history' ? ' active' : ''}`} onClick={() => handleStepChange('history')}>
+              📋 Mis Citas
+            </button>
+          </div>
+
+          {/* ANIMATED CONTAINER */}
+          <div style={{ transition: 'all .3s', opacity: animating ? 0 : 1, transform: animating ? 'scale(.97)' : 'scale(1)' }}>
+
+            {/* ── FORMULARIO ── */}
+            {step === 'form' && (
+              <div className="af-card">
+                <div className="af-card-header">
+                  <h2>📅 Agendar Cita</h2>
+                  <p>Completá los datos para reservar tu espacio</p>
                 </div>
-                
-                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-4 md:p-6 text-white relative z-10">
-                  <h2 className="text-xl md:text-2xl font-bold text-center">📅 Agendar Cita</h2>
-                  <p className="text-center text-blue-100 text-xs md:text-sm mt-1">Completa los datos para reservar tu espacio</p>
-                </div>
-                
-                <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 md:space-y-5 relative z-10">
-                  <div className="transform transition-all duration-300 hover:translate-x-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">👤 Nombre completo</label>
-                    <input
-                      type="text"
-                      name="customer_name"
-                      value={formData.customer_name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 outline-none text-sm md:text-base"
-                      placeholder="Tu nombre completo"
-                    />
-                  </div>
+                <div className="af-body">
+                  <form onSubmit={handleSubmit}>
+                    <div className="af-field">
+                      <label className="af-label">👤 NOMBRE COMPLETO</label>
+                      <input className="af-input" type="text" name="customer_name" value={formData.customer_name} onChange={handleChange} required placeholder="Tu nombre completo" />
+                    </div>
 
-                  <div className="transform transition-all duration-300 hover:translate-x-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">📞 Teléfono</label>
-                    <input
-                      type="tel"
-                      name="customer_phone"
-                      value={formData.customer_phone}
-                      onChange={handleChange}
-                      placeholder="Ej: 50612345678"
-                      required
-                      className="w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 outline-none text-sm md:text-base"
-                    />
-                    <p className="text-xs text-gray-400 mt-1">Número para contacto del negocio</p>
-                  </div>
+                    <div className="af-field">
+                      <label className="af-label">📞 TELÉFONO</label>
+                      <input className="af-input" type="tel" name="customer_phone" value={formData.customer_phone} onChange={handleChange} required placeholder="Ej: 50612345678" />
+                      <p className="af-hint">Número para contacto y consultar tus citas</p>
+                    </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="transform transition-all duration-300 hover:translate-x-2">
-                      <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">🚗 Tipo de vehículo</label>
-                      <select
-                        name="vehicle_type"
-                        value={formData.vehicle_type}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 outline-none text-sm md:text-base"
-                      >
-                        <option value="">Selecciona el tipo</option>
-                        {vehicleTypes.map(v => (
-                          <option key={v.value} value={v.value}>{v.label}</option>
-                        ))}
+                    <div className="af-grid-2">
+                      <div>
+                        <label className="af-label">🚗 TIPO DE VEHÍCULO</label>
+                        <select className="af-input" name="vehicle_type" value={formData.vehicle_type} onChange={handleChange} required>
+                          <option value="">Seleccioná</option>
+                          {vehicleTypes.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="af-label">🔧 MARCA Y MODELO</label>
+                        <input className="af-input" type="text" name="vehicle_model" value={formData.vehicle_model} onChange={handleChange} required placeholder="Ej: Toyota Hilux" />
+                      </div>
+                    </div>
+
+                    <div className="af-field">
+                      <label className="af-label">🛠️ SERVICIO</label>
+                      <select className="af-input" name="service_type" value={formData.service_type} onChange={handleChange} required>
+                        <option value="">Seleccioná un servicio</option>
+                        {services.map((s) => <option key={s.value} value={s.value}>{s.label} — {s.price}</option>)}
                       </select>
+                      {selectedService && <p className="af-hint">⏱ Duración estimada: {selectedService.duration} minutos</p>}
                     </div>
 
-                    <div className="transform transition-all duration-300 hover:translate-x-2">
-                      <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">🔧 Marca y modelo</label>
-                      <input
-                        type="text"
-                        name="vehicle_model"
-                        value={formData.vehicle_model}
-                        onChange={handleChange}
-                        placeholder="Ej: Toyota Hilux"
-                        required
-                        className="w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 outline-none text-sm md:text-base"
-                      />
-                    </div>
-                  </div>
+                    <span className="af-section-label">📅 SELECCIONÁ LA FECHA</span>
+                    <Calendar onChange={(date) => handleDateChange(date as Date)} value={selectedDate} minDate={new Date()} />
 
-                  <div className="transform transition-all duration-300 hover:translate-x-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">🛠️ Servicio</label>
-                    <select
-                      name="service_type"
-                      value={formData.service_type}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 outline-none text-sm md:text-base"
-                    >
-                      <option value="">Selecciona un servicio</option>
-                      {services.map(s => (
-                        <option key={s.value} value={s.value}>{s.label} - {s.price}</option>
-                      ))}
-                    </select>
-                    {selectedService && (
-                      <p className="text-xs text-gray-500 mt-1">⏱️ Duración: {selectedService.duration} minutos</p>
-                    )}
-                  </div>
-
-                  <div className="transform transition-all duration-300 hover:scale-105">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">📅 Fecha</label>
-                    <div className="flex justify-center overflow-x-auto">
-                      <Calendar
-                        onChange={handleDateChange}
-                        value={selectedDate}
-                        minDate={new Date()}
-                        className="border-0 shadow-lg rounded-xl text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1 md:mb-2">⏰ Hora</label>
-                    <div className="grid grid-cols-3 gap-1.5 md:gap-2">
-                      {availableTimes.map((time, idx) => (
-                        <button
-                          key={time}
-                          type="button"
-                          onClick={() => setFormData({ ...formData, appointment_time: time })}
-                          className={`p-2 md:p-3 rounded-xl font-medium text-xs md:text-base transition-all duration-200 transform hover:scale-105 ${
-                            formData.appointment_time === time 
-                              ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md scale-105' 
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
-                          style={{ animationDelay: `${idx * 0.05}s` }}
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
-                    {availableTimes.length === 0 && (
-                      <p className="text-red-500 text-sm mt-2 text-center">No hay horarios disponibles</p>
-                    )}
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading || !formData.appointment_time || availableTimes.length === 0}
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-base md:text-lg py-3 md:py-4 rounded-xl hover:from-blue-600 hover:to-cyan-600 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 shadow-lg"
-                  >
-                    {loading ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                        </svg>
-                        Agendando...
-                      </span>
+                    <span className="af-section-label">⏰ HORARIOS DISPONIBLES</span>
+                    {availableTimes.length === 0 ? (
+                      <p style={{ color: '#f87171', fontSize: '.88rem', textAlign: 'center', padding: '1rem 0' }}>No hay horarios disponibles para este día</p>
                     ) : (
-                      '📌 AGENDAR CITA'
+                      <div className="af-time-grid">
+                        {availableTimes.map((time) => (
+                          <button key={time} type="button" className={`af-time-btn${formData.appointment_time === time ? ' sel' : ''}`} onClick={() => setFormData({ ...formData, appointment_time: time })}>
+                            {time}
+                          </button>
+                        ))}
+                      </div>
                     )}
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
 
-          {/* Historial de citas - CON BUSCADOR MÁS PEQUEÑO EN MÓVIL */}
-          {step === 'history' && (
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-4 md:p-6 text-white">
-                <h2 className="text-xl md:text-2xl font-bold text-center">📋 Mis Citas</h2>
-                <p className="text-center text-blue-100 text-xs md:text-sm mt-1">Consulta tus citas agendadas</p>
-              </div>
-              
-              <div className="p-4 md:p-6">
-                {/* Buscador responsivo - más pequeño en móvil */}
-                <div className="flex flex-col sm:flex-row gap-2 md:gap-3 mb-6">
-                  <input
-                    type="tel"
-                    placeholder="Ingresa tu número de teléfono"
-                    value={phoneToSearch}
-                    onChange={(e) => setPhoneToSearch(e.target.value)}
-                    className="flex-1 px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 outline-none text-sm md:text-base"
-                  />
-                  <button
-                    onClick={handleSearchHistory}
-                    className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    Buscar
-                  </button>
+                    <button type="submit" className="af-submit" disabled={loading || !formData.appointment_time || availableTimes.length === 0}>
+                      {loading ? (
+                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem' }}>
+                          <svg style={{ animation: 'spin 1s linear infinite', width: 18, height: 18 }} viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" fill="none" strokeDasharray="31" strokeDashoffset="10" />
+                          </svg>
+                          Agendando...
+                        </span>
+                      ) : '📌 AGENDAR CITA'}
+                    </button>
+                    <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+                  </form>
                 </div>
+              </div>
+            )}
 
-                {showHistory && (
-                  <>
-                    {customerHistory.length === 0 ? (
-                      <div className="text-center py-8 md:py-12">
-                        <div className="text-5xl md:text-6xl mb-3 md:mb-4 animate-bounce">📭</div>
-                        <p className="text-gray-500 text-base md:text-lg">No tienes citas agendadas</p>
+            {/* ── HISTORIAL ── */}
+            {step === 'history' && (
+              <div className="af-card">
+                <div className="af-card-header">
+                  <h2>📋 Mis Citas</h2>
+                  <p>Consultá tus citas agendadas</p>
+                </div>
+                <div className="af-body">
+                  <div style={{ display: 'flex', gap: '.75rem', marginBottom: '1.5rem' }}>
+                    <input className="af-input" type="tel" placeholder="Ingresá tu número de teléfono" value={phoneToSearch} onChange={(e) => setPhoneToSearch(e.target.value)} style={{ flex: 1 }} />
+                    <button onClick={() => { if (phoneToSearch) { fetchCustomerHistory(phoneToSearch); setShowHistory(true) } }} style={{ background: 'linear-gradient(135deg,#1a6fd4,#0eb8d0)', color: '#fff', border: 'none', padding: '.75rem 1.25rem', borderRadius: 10, cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                      Buscar
+                    </button>
+                  </div>
+
+                  {showHistory && (
+                    customerHistory.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '3rem 0', color: 'rgba(255,255,255,.4)' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                        <p>No hay citas registradas para ese número</p>
                       </div>
                     ) : (
-                      <div className="space-y-3 md:space-y-4">
-                        {customerHistory.map((cita, idx) => {
-                          const service = services.find(s => s.value === cita.service_type)
-                          const time12h = convertTo12Hour(cita.appointment_time)
+                      <div>
+                        {customerHistory.map((cita) => {
+                          const svc = services.find((s) => s.value === cita.service_type)
                           return (
-                            <div 
-                              key={cita.id} 
-                              className="border-2 border-gray-100 rounded-xl p-3 md:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] bg-white"
-                              style={{ animationDelay: `${idx * 0.1}s` }}
-                            >
-                              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 md:gap-0">
-                                <div className="space-y-1 md:space-y-2">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xl md:text-2xl">{service?.label.split(' ')[0]}</span>
-                                    <p className="font-bold text-gray-800 text-sm md:text-base">{service?.label || cita.service_type}</p>
+                            <div key={cita.id} className="af-history-card">
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.5rem' }}>
+                                    <span style={{ fontSize: '1.3rem' }}>{svc?.label.split(' ')[0]}</span>
+                                    <span style={{ fontWeight: 500, fontSize: '.95rem' }}>{svc?.label || cita.service_type}</span>
                                   </div>
-                                  <p className="text-xs md:text-sm text-gray-600 flex items-center gap-1 flex-wrap">
-                                    <span>{getVehicleIcon(cita.vehicle_type)}</span> {cita.vehicle_type} - {cita.vehicle_model}
+                                  <p style={{ fontSize: '.82rem', color: 'rgba(255,255,255,.5)', marginBottom: '.3rem' }}>
+                                    {getVehicleIcon(cita.vehicle_type)} {cita.vehicle_type} — {cita.vehicle_model}
                                   </p>
-                                  <p className="text-xs md:text-sm text-gray-600">📅 {formatDateForDisplay(cita.appointment_date)}</p>
-                                  <p className="text-xs md:text-sm text-gray-600">⏰ {time12h}</p>
+                                  <p style={{ fontSize: '.82rem', color: 'rgba(255,255,255,.5)', marginBottom: '.2rem' }}>📅 {formatDateDisplay(cita.appointment_date)}</p>
+                                  <p style={{ fontSize: '.82rem', color: 'rgba(255,255,255,.5)' }}>⏰ {convertTo12Hour(cita.appointment_time)}</p>
                                 </div>
-                                <span className="text-xs bg-green-100 text-green-700 px-2 md:px-3 py-1 rounded-full font-semibold animate-pulse self-start">
-                                  ✓ Confirmada
-                                </span>
+                                <span className="af-confirmed">✓ Confirmada</span>
                               </div>
                             </div>
                           )
                         })}
                       </div>
-                    )}
-                  </>
-                )}
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* MODAL DE ÉXITO */}
+        {/* ── MODAL ÉXITO ── */}
         {successData.show && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl transform animate-scaleIn">
-              <div className="text-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                  <svg className="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h2 className="text-xl md:text-2xl font-bold text-blue-600 mb-2">¡Cita Agendada!</h2>
-                <p className="text-gray-500 text-sm md:text-base mb-6">Tu cita ha sido confirmada exitosamente</p>
+          <div className="af-modal-overlay">
+            <div className="af-modal">
+              <div className="af-modal-icon">
+                <svg width="32" height="32" fill="none" stroke="white" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-              
-              <div className="border-t border-b border-gray-100 py-4 space-y-2 md:space-y-3">
-                <div className="flex justify-between items-center text-sm md:text-base">
-                  <span className="text-gray-500">🚗 Vehículo:</span>
-                  <span className="font-semibold">{successData.vehicleType} {successData.vehicleModel}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm md:text-base">
-                  <span className="text-gray-500">📅 Fecha:</span>
-                  <span className="font-semibold">{formatDateSimple(successData.date)}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm md:text-base">
-                  <span className="text-gray-500">⏰ Hora:</span>
-                  <span className="font-semibold">{successData.time}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm md:text-base">
-                  <span className="text-gray-500">🧼 Servicio:</span>
-                  <span className="font-semibold">{successData.service}</span>
-                </div>
+              <h2 style={{ fontFamily: "'Sora',sans-serif", textAlign: 'center', fontSize: '1.3rem', marginBottom: '.4rem', color: '#fff' }}>¡Cita Agendada!</h2>
+              <p style={{ textAlign: 'center', color: 'rgba(255,255,255,.45)', fontSize: '.85rem', marginBottom: '1.5rem' }}>Tu cita fue confirmada exitosamente</p>
+
+              <div style={{ background: 'rgba(255,255,255,.04)', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.5rem' }}>
+                {[
+                  { k: '🚗 Vehículo', v: `${successData.vehicleType} ${successData.vehicleModel}` },
+                  { k: '📅 Fecha', v: formatDateSimple(successData.date) },
+                  { k: '⏰ Hora', v: successData.time },
+                  { k: '🧼 Servicio', v: successData.service },
+                ].map((row) => (
+                  <div key={row.k} className="af-modal-row">
+                    <span className="af-modal-key">{row.k}</span>
+                    <span className="af-modal-val">{row.v}</span>
+                  </div>
+                ))}
               </div>
-              
-              <div className="mt-6 text-center">
-                <p className="text-xs text-gray-400 mb-3">📸 Toma una captura para recordar tu cita</p>
-                <button
-                  onClick={() => setSuccessData({ show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' })}
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl hover:from-blue-600 hover:to-cyan-600 font-semibold transition-all duration-300"
-                >
-                  Cerrar
-                </button>
-              </div>
+
+              <p style={{ textAlign: 'center', fontSize: '.75rem', color: 'rgba(255,255,255,.25)', marginBottom: '1rem' }}>📸 Tomá una captura para recordar tu cita</p>
+              <button onClick={() => setSuccessData({ show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' })} style={{ width: '100%', padding: '1rem', background: 'linear-gradient(135deg,#1a6fd4,#0eb8d0)', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 600, fontSize: '.95rem', cursor: 'pointer', fontFamily: "'Sora',sans-serif" }}>
+                Cerrar
+              </button>
             </div>
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-          from { transform: scale(0.9); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        @keyframes bubble {
-          0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-          10% { opacity: 0.4; }
-          90% { opacity: 0.4; }
-          100% { transform: translateY(-600px) rotate(360deg); opacity: 0; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
-        }
-        .animate-scaleIn {
-          animation: scaleIn 0.2s ease-out;
-        }
-        .animate-bubble {
-          animation: bubble linear infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-        .animate-pulse {
-          animation: pulse 2s infinite;
-        }
-      `}</style>
-    </div>
+    </>
   )
 }

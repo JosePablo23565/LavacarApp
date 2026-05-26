@@ -1,110 +1,113 @@
 export function Contact() {
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Título principal */}
-        <div className="text-center mb-8">
-          <div className="inline-block bg-gradient-to-r from-blue-500 to-blue-600 rounded-full p-3 mb-4 shadow-lg">
-            <span className="text-4xl">📞</span>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600&family=DM+Sans:wght@400;500&display=swap');
+        .ct-root{min-height:100vh;background:linear-gradient(135deg,#0a0e1a 0%,#0f1e3a 60%,#0a0e1a 100%);padding:3rem 1.5rem;font-family:'DM Sans',sans-serif;color:#fff;}
+        .ct-inner{max-width:680px;margin:0 auto;}
+        .ct-header{text-align:center;margin-bottom:2.5rem;}
+        .ct-icon-circle{width:72px;height:72px;background:linear-gradient(135deg,#1a6fd4,#0eb8d0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.2rem;}
+        .ct-title{font-family:'Sora',sans-serif;font-size:2rem;font-weight:600;margin-bottom:.4rem;}
+        .ct-sub{color:rgba(255,255,255,.45);font-size:.95rem;}
+        .ct-card{background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden;margin-bottom:1rem;}
+        .ct-card-header{background:linear-gradient(135deg,#1a6fd4,#0eb8d0);padding:1rem 1.5rem;text-align:center;}
+        .ct-card-header p{font-size:.8rem;color:rgba(255,255,255,.85);letter-spacing:.06em;}
+        .ct-items{padding:1.25rem;}
+        .ct-item{display:flex;align-items:flex-start;gap:1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1rem 1.25rem;margin-bottom:.75rem;transition:border-color .2s;}
+        .ct-item:hover{border-color:rgba(14,184,208,.3);}
+        .ct-item-icon{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+        .ct-item-title{font-weight:500;font-size:.95rem;margin-bottom:.3rem;}
+        .ct-item-value{font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.5;}
+        .ct-item-value a{color:#0eb8d0;text-decoration:none;transition:color .2s;}
+        .ct-item-value a:hover{color:#5cd6e8;}
+        .ct-maps-btn{width:100%;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;padding:1rem;border-radius:12px;font-size:.95rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s;font-family:'DM Sans',sans-serif;margin-top:.5rem;}
+        .ct-maps-btn:hover{opacity:.88;}
+        .ct-schedule-row{display:flex;justify-content:space-between;padding:.4rem 0;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.05);}
+        .ct-schedule-row:last-child{border-bottom:none;}
+        .ct-schedule-day{color:rgba(255,255,255,.5);}
+        .ct-schedule-hours{color:#34d399;font-weight:500;}
+        .ct-wa-btn{display:flex;align-items:center;gap:.5rem;color:#25d366;text-decoration:none;font-size:1rem;font-weight:500;transition:opacity .2s;}
+        .ct-wa-btn:hover{opacity:.8;}
+        .ct-badge{display:inline-block;background:rgba(37,211,102,.12);color:#25d366;border:1px solid rgba(37,211,102,.2);padding:.2rem .6rem;border-radius:6px;font-size:.74rem;margin-left:.5rem;}
+      `}</style>
+
+      <div className="ct-root">
+        <div className="ct-inner">
+          <div className="ct-header">
+            <div className="ct-icon-circle">📞</div>
+            <h1 className="ct-title">Contacto</h1>
+            <p className="ct-sub">Estamos aquí para ayudarte</p>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Contacto</h2>
-          <p className="text-gray-500">Estamos aquí para ayudarte</p>
-        </div>
 
-        {/* Tarjeta principal */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* Header decorativo */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-center">
-            <p className="text-white text-sm uppercase tracking-wide">Información de contacto</p>
-          </div>
-          
-          {/* Contenido */}
-          <div className="p-6 space-y-4">
-            {/* Dirección */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 transition hover:shadow-md">
-              <div className="flex items-start gap-4">
-                <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-sm">
-                  <span className="text-2xl">📍</span>
-                </div>
+          <div className="ct-card">
+            <div className="ct-card-header">
+              <p>INFORMACIÓN DE CONTACTO</p>
+            </div>
+            <div className="ct-items">
+              {/* Dirección */}
+              <div className="ct-item">
+                <div className="ct-item-icon">📍</div>
                 <div>
-                  <p className="font-semibold text-gray-800 text-lg">Dirección</p>
-                  <p className="text-gray-600">
-                    Bagaces, Guanacaste<br />
-                    Costa Rica
-                  </p>
+                  <div className="ct-item-title">Dirección</div>
+                  <div className="ct-item-value">Bagaces, Guanacaste<br />Costa Rica</div>
                 </div>
               </div>
-            </div>
 
-            {/* Teléfono / WhatsApp */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 transition hover:shadow-md">
-              <div className="flex items-start gap-4">
-                <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-sm">
-                  <span className="text-2xl">📱</span>
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-800 text-lg">Teléfono / WhatsApp</p>
-                  <a 
-                    href="https://wa.me/50612345678" 
-                    target="_blank"
-                    className="text-green-600 hover:text-green-700 font-medium text-lg flex items-center gap-2"
-                  >
-                    +506 1234-5678
-                    <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-full">WhatsApp</span>
-                  </a>
-                  <p className="text-xs text-gray-400 mt-1">Click para enviar mensaje directo</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 transition hover:shadow-md">
-              <div className="flex items-start gap-4">
-                <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-sm">
-                  <span className="text-2xl">✉️</span>
-                </div>
+              {/* Teléfono / WhatsApp */}
+              <div className="ct-item">
+                <div className="ct-item-icon">📱</div>
                 <div>
-                  <p className="font-semibold text-gray-800 text-lg">Correo electrónico</p>
-                  <a 
-                    href="mailto:lavacar@gmail.com" 
-                    className="text-purple-600 hover:text-purple-700 font-medium"
-                  >
-                    lavacar@gmail.com
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Horario */}
-            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 transition hover:shadow-md">
-              <div className="flex items-start gap-4">
-                <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-sm">
-                  <span className="text-2xl">⏰</span>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-800 text-lg">Horario de atención</p>
-                  <div className="space-y-1 mt-1">
-                    <p className="text-gray-600">
-                      Lunes a Sábado: <span className="font-medium text-green-600">8am - 6pm</span>
-                    </p>
-                    <p className="text-gray-600">
-                      Domingos: <span className="font-medium text-green-600">9am - 2pm</span>
-                    </p>
+                  <div className="ct-item-title">Teléfono / WhatsApp</div>
+                  <div className="ct-item-value">
+                    <a href="https://wa.me/50612345678" target="_blank" rel="noreferrer" className="ct-wa-btn">
+                      +506 1234-5678
+                      <span className="ct-badge">WhatsApp</span>
+                    </a>
+                    <div style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.3)', marginTop: '.3rem' }}>Toca para enviar mensaje directo</div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Botón de Google Maps dentro del cuadro */}
-            <button
-              onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218901,-85.2548091', '_blank')}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition flex items-center justify-center gap-2 font-semibold shadow-md mt-4"
-            >
-              🗺️ Ver ubicación en Google Maps
-            </button>
+              {/* Email */}
+              <div className="ct-item">
+                <div className="ct-item-icon">✉️</div>
+                <div>
+                  <div className="ct-item-title">Correo electrónico</div>
+                  <div className="ct-item-value">
+                    <a href="mailto:lavacar@gmail.com">lavacar@gmail.com</a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Horario */}
+              <div className="ct-item">
+                <div className="ct-item-icon">⏰</div>
+                <div style={{ flex: 1 }}>
+                  <div className="ct-item-title">Horario de atención</div>
+                  <div className="ct-item-value" style={{ width: '100%' }}>
+                    <div className="ct-schedule-row">
+                      <span className="ct-schedule-day">Lunes a Sábado</span>
+                      <span className="ct-schedule-hours">8:00am – 6:00pm</span>
+                    </div>
+                    <div className="ct-schedule-row">
+                      <span className="ct-schedule-day">Domingos</span>
+                      <span className="ct-schedule-hours">9:00am – 2:00pm</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botón Maps */}
+              <button
+                className="ct-maps-btn"
+                onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218901,-85.2548091', '_blank')}
+              >
+                🗺️ Ver ubicación en Google Maps
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
