@@ -94,12 +94,25 @@ export function AdminDashboard() {
       .update({ is_approved: true })
       .eq('id', id)
     fetchTestimonials()
+    // Notificar al Home que actualice las opiniones
+    window.dispatchEvent(new Event('opiniones-actualizadas'))
   }
 
   const deleteTestimonial = async (id: number) => {
     if (confirm('¿Eliminar esta opinión?')) {
-      await supabase.from('testimonials').delete().eq('id', id)
-      fetchTestimonials()
+      const { error } = await supabase
+        .from('testimonials')
+        .delete()
+        .eq('id', id)
+      
+      if (error) {
+        alert('Error al eliminar: ' + error.message)
+      } else {
+        // Recargar la lista en el panel
+        await fetchTestimonials()
+        // Notificar al Home que actualice las opiniones
+        window.dispatchEvent(new Event('opiniones-actualizadas'))
+      }
     }
   }
 

@@ -8,6 +8,52 @@ export function Home() {
   const [testimonials, setTestimonials] = useState<any[]>([])
   const [loadingTestimonials, setLoadingTestimonials] = useState(true)
 
+  // Función para cargar testimonios (se puede llamar desde el evento)
+  const fetchTestimonials = async () => {
+    try {
+      console.log('🔍 Cargando testimonios desde Supabase...')
+      
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false })
+        .limit(3)
+      
+      if (error) {
+        console.error('❌ Error cargando testimonios:', error)
+        setTestimonials([])
+      } else if (data && data.length > 0) {
+        console.log('✅ Testimonios cargados en Home:', data)
+        setTestimonials(data)
+      } else {
+        console.log('⚠️ No hay testimonios aprobados en Supabase')
+        setTestimonials([])
+      }
+    } catch (err) {
+      console.error('❌ Error inesperado:', err)
+      setTestimonials([])
+    }
+    setLoadingTestimonials(false)
+  }
+
+  // Cargar testimonios al montar el componente
+  useEffect(() => {
+    fetchTestimonials()
+  }, [])
+
+  // Escuchar eventos de actualización desde el panel de admin
+  useEffect(() => {
+    const handleUpdate = () => {
+      console.log('🔄 Actualizando testimonios por evento')
+      setLoadingTestimonials(true)
+      fetchTestimonials()
+    }
+    
+    window.addEventListener('opiniones-actualizadas', handleUpdate)
+    return () => window.removeEventListener('opiniones-actualizadas', handleUpdate)
+  }, [])
+
   useEffect(() => {
     // Water drops animation
     if (dropsRef.current) {
@@ -78,34 +124,6 @@ export function Home() {
       observer.disconnect()
       counterObserver.disconnect()
     }
-  }, [])
-
-  // Cargar testimonios desde Supabase (tabla: testimonials)
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('testimonials')
-          .select('*')
-          .eq('is_approved', true)
-          .order('created_at', { ascending: false })
-          .limit(3)
-        
-        if (error) {
-          console.error('Error cargando testimonios:', error)
-          setTestimonials([])
-        } else if (data && data.length > 0) {
-          setTestimonials(data)
-        } else {
-          setTestimonials([])
-        }
-      } catch (err) {
-        console.error('Error:', err)
-        setTestimonials([])
-      }
-      setLoadingTestimonials(false)
-    }
-    fetchTestimonials()
   }, [])
 
   return (
@@ -504,7 +522,7 @@ export function Home() {
                 </div>
               ) : (
                 testimonials.map((testimonial, idx) => (
-                  <div key={testimonial.id} className={`lc-review lc-reveal lc-d${(idx % 3) + 1}`}>
+                  <div key={testimonial.id} className="lc-review">
                     <div className="lc-stars">{"★".repeat(testimonial.rating || 5)}</div>
                     <div className="lc-review-text">"{testimonial.comment}"</div>
                     <div className="lc-reviewer">
