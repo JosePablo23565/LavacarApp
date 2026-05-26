@@ -175,12 +175,20 @@ export function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800">📋 Panel de Administración</h1>
-            <button 
-              onClick={handleLogout} 
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-2"
-            >
-              🔒 Cerrar Sesión
-            </button>
+            <div className="flex gap-3">
+              <a 
+                href="/" 
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
+              >
+                🏠 Volver al inicio
+              </a>
+              <button 
+                onClick={handleLogout} 
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-2"
+              >
+                🔒 Cerrar Sesión
+              </button>
+            </div>
           </div>
         </div>
 

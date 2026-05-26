@@ -116,6 +116,14 @@ function NavBar() {
                 <span className="text-xl group-hover:scale-110 transition-transform">⭐</span>
                 <span className="font-medium">Opiniones</span>
               </a>
+              <a 
+                href="/login" 
+                onClick={handleMenuClick}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-200 transform hover:translate-x-1 group"
+              >
+                <span className="text-xl group-hover:scale-110 transition-transform">🔐</span>
+                <span className="font-medium">Admin</span>
+              </a>
               <button 
                 onClick={() => {
                   setShowLocationModal(true)
@@ -138,14 +146,12 @@ function NavBar() {
       {showLocationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl transform animate-scaleIn">
-            {/* Icono decorativo circular */}
             <div className="text-center mb-4">
               <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto shadow-lg animate-pulse">
                 <span className="text-4xl">📍</span>
               </div>
             </div>
             
-            {/* Título principal */}
             <h3 className="text-2xl font-bold text-center text-gray-800 mb-2">
               Nuestra Ubicación
             </h3>
@@ -153,7 +159,6 @@ function NavBar() {
               ¡Ven y conócenos! 🚗
             </p>
             
-            {/* Tarjeta de dirección */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 mb-4">
               <div className="flex items-start gap-3">
                 <div className="text-2xl bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
@@ -169,7 +174,6 @@ function NavBar() {
               </div>
             </div>
             
-            {/* Tarjeta de horario */}
             <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-6">
               <div className="flex items-start gap-3">
                 <div className="text-2xl bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
@@ -185,7 +189,6 @@ function NavBar() {
               </div>
             </div>
             
-            {/* Botones de acción */}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218901,-85.2548091', '_blank')}
@@ -201,7 +204,6 @@ function NavBar() {
               </button>
             </div>
             
-            {/* Mensaje de cierre */}
             <p className="text-center text-xs text-gray-400 mt-4">
               ¡Te esperamos con los mejores precios y calidad!
             </p>
@@ -241,7 +243,7 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-100">
         <Routes>
-          {/* Home como página principal (sin NavBar porque ya tiene su propio diseño) */}
+          {/* Home como página principal */}
           <Route path="/" element={<Home />} />
           
           {/* Rutas con NavBar */}
