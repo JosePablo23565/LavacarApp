@@ -94,7 +94,6 @@ export function AdminDashboard() {
       .update({ is_approved: true })
       .eq('id', id)
     fetchTestimonials()
-    // Notificar al Home que actualice las opiniones
     window.dispatchEvent(new Event('opiniones-actualizadas'))
   }
 
@@ -108,9 +107,7 @@ export function AdminDashboard() {
       if (error) {
         alert('Error al eliminar: ' + error.message)
       } else {
-        // Recargar la lista en el panel
         await fetchTestimonials()
-        // Notificar al Home que actualice las opiniones
         window.dispatchEvent(new Event('opiniones-actualizadas'))
       }
     }
@@ -123,19 +120,19 @@ export function AdminDashboard() {
 
   const getServiceLabel = (type: string) => {
     const services: Record<string, string> = {
-      basico: '🚗 Lavado Básico',
-      completo: '✨ Lavado Completo',
-      encerado: '🌟 Encerado',
-      tapizado: '🧼 Tapizado'
+      basico: 'Lavado Básico',
+      completo: 'Lavado Completo',
+      encerado: 'Encerado',
+      tapizado: 'Tapizado'
     }
     return services[type] || type
   }
 
   const getVehicleLabel = (type: string) => {
     const vehicles: Record<string, string> = {
-      carro: '🚗 Carro',
-      moto: '🏍️ Moto',
-      camioneta: '🚐 Camioneta'
+      carro: 'Carro',
+      moto: 'Moto',
+      camioneta: 'Camioneta'
     }
     return vehicles[type] || type || '—'
   }
@@ -163,6 +160,14 @@ export function AdminDashboard() {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
+    })
+  }
+
+  const formatDateCard = (date: string) => {
+    return new Date(date).toLocaleDateString('es-CR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
     })
   }
 
@@ -345,6 +350,18 @@ export function AdminDashboard() {
           background: rgba(255, 255, 255, 0.1);
           color: white;
         }
+        
+        .cita-card {
+          background: #111827;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 16px;
+          padding: 1rem;
+          transition: all 0.2s;
+        }
+        
+        .cita-card:hover {
+          border-color: rgba(14, 184, 208, 0.3);
+        }
       `}</style>
 
       <div className="admin-root">
@@ -353,7 +370,7 @@ export function AdminDashboard() {
           <div className="admin-card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
               <h1 style={{ fontSize: '1.8rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #fff, #0eb8d0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                📋 Panel de Administración
+                Panel de Administración
               </h1>
               <div style={{ display: 'flex', gap: '0.75rem' }}>
                 <a 
@@ -361,14 +378,14 @@ export function AdminDashboard() {
                   className="btn-primary"
                   style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
                 >
-                  🏠 Volver al inicio
+                  Volver al inicio
                 </a>
                 <button 
                   onClick={handleLogout} 
                   className="btn-danger"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
                 >
-                  🔒 Cerrar Sesión
+                  Cerrar Sesión
                 </button>
               </div>
             </div>
@@ -381,14 +398,14 @@ export function AdminDashboard() {
               style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', border: 'none' }}
               className={activeTab === 'citas' ? 'tab-active' : 'tab-inactive'}
             >
-              📅 Citas ({appointments.length})
+              Citas ({appointments.length})
             </button>
             <button
               onClick={() => setActiveTab('testimonios')}
               style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', border: 'none' }}
               className={activeTab === 'testimonios' ? 'tab-active' : 'tab-inactive'}
             >
-              ⭐ Opiniones {pendingTestimonials.length > 0 && `(${pendingTestimonials.length} pendientes)`}
+              Opiniones {pendingTestimonials.length > 0 && `(${pendingTestimonials.length} pendientes)`}
             </button>
           </div>
 
@@ -399,15 +416,15 @@ export function AdminDashboard() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                 <div className="stat-card">
                   <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0eb8d0' }}>{stats.total}</p>
-                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>📊 Total Citas</p>
+                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Total Citas</p>
                 </div>
                 <div className="stat-card">
                   <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#34d399' }}>{stats.hoy}</p>
-                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>📅 Citas Hoy</p>
+                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Citas Hoy</p>
                 </div>
                 <div className="stat-card">
                   <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#f59e0b' }}>{stats.proximas}</p>
-                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>⏳ Próximas Citas</p>
+                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Próximas Citas</p>
                 </div>
               </div>
 
@@ -417,7 +434,7 @@ export function AdminDashboard() {
                   <div style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>🔍</div>
                   <input
                     type="text"
-                    placeholder="Buscar por nombre, teléfono o vehículo..."
+                    placeholder="nombre, teléfono o vehículo..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="search-input"
@@ -425,20 +442,66 @@ export function AdminDashboard() {
                 </div>
               </div>
 
-              {/* TABLA DE CITAS */}
-              <div className="admin-card" style={{ overflow: 'hidden' }}>
+              {/* VISTA EN TARJETAS (MÓVIL) */}
+              <div className="block md:hidden space-y-3">
+                {filteredAppointments.length === 0 ? (
+                  <div className="admin-card p-8 text-center text-white/40">No hay citas registradas</div>
+                ) : (
+                  filteredAppointments.map((apt) => (
+                    <div key={apt.id} className="cita-card">
+                      <div className="flex justify-between items-start mb-3 pb-2 border-b border-white/10">
+                        <div>
+                          <p className="font-semibold text-white text-base">{apt.customer_name}</p>
+                          <p className="text-sm text-white/50">{apt.customer_phone}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => deleteAppointment(apt.id)} className="text-red-400 hover:text-red-300 text-lg px-2 py-1 transition">🗑️</button>
+                          <a
+                            href={`https://wa.me/${apt.customer_phone}?text=Hola%20${apt.customer_name}%2C%20tu%20cita%20del%20${formatDateDisplay(apt.appointment_date)}%20a%20las%20${convertTo12Hour(apt.appointment_time)}%20está%20confirmada.`}
+                            target="_blank"
+                            className="text-green-400 hover:text-green-300 text-lg px-2 py-1 transition"
+                          >
+                            💬
+                          </a>
+                        </div>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex">
+                          <span className="text-white/40 w-24">Vehículo:</span>
+                          <span className="text-white/80">{getVehicleLabel(apt.vehicle_type)}</span>
+                        </div>
+                        <div className="flex">
+                          <span className="text-white/40 w-24">Modelo:</span>
+                          <span className="text-white/80">{apt.vehicle_model || '—'}</span>
+                        </div>
+                        <div className="flex">
+                          <span className="text-white/40 w-24">Servicio:</span>
+                          <span className="text-white/80">{getServiceLabel(apt.service_type)}</span>
+                        </div>
+                        <div className="flex">
+                          <span className="text-white/40 w-24">Fecha y hora:</span>
+                          <span className="text-white/80">{formatDateCard(apt.appointment_date)} · {convertTo12Hour(apt.appointment_time)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* VISTA EN TABLA (ESCRITORIO) */}
+              <div className="hidden md:block admin-card" style={{ overflow: 'hidden' }}>
                 <div style={{ overflowX: 'auto' }}>
                   <table className="admin-table">
                     <thead>
                       <tr>
-                        <th>👤 Cliente</th>
-                        <th>📞 Teléfono</th>
-                        <th>🚗 Vehículo</th>
-                        <th>🔧 Modelo</th>
-                        <th>🛠️ Servicio</th>
-                        <th>📅 Fecha</th>
-                        <th>⏰ Hora</th>
-                        <th style={{ textAlign: 'center' }}>⚙️ Acciones</th>
+                        <th>Cliente</th>
+                        <th>Teléfono</th>
+                        <th>Vehículo</th>
+                        <th>Modelo</th>
+                        <th>Servicio</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th style={{ textAlign: 'center' }}>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -458,18 +521,18 @@ export function AdminDashboard() {
                             <td><span className="badge-green">{convertTo12Hour(apt.appointment_time)}</span></td>
                             <td style={{ textAlign: 'center' }}>
                               <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                                <button onClick={() => deleteAppointment(apt.id)} className="btn-danger">🗑️ Eliminar</button>
+                                <button onClick={() => deleteAppointment(apt.id)} className="btn-danger">🗑️</button>
                                 <a
                                   href={`https://wa.me/${apt.customer_phone}?text=Hola%20${apt.customer_name}%2C%20tu%20cita%20del%20${formatDateDisplay(apt.appointment_date)}%20a%20las%20${convertTo12Hour(apt.appointment_time)}%20está%20confirmada.`}
                                   target="_blank"
                                   className="btn-success"
                                   style={{ textDecoration: 'none' }}
                                 >
-                                  💬 WhatsApp
+                                  💬
                                 </a>
                               </div>
                             </td>
-                          </tr>
+                           </tr>
                         ))
                       )}
                     </tbody>
@@ -479,30 +542,34 @@ export function AdminDashboard() {
             </>
           )}
 
-          {/* CONTENIDO DE TESTIMONIOS */}
+          {/* CONTENIDO DE TESTIMONIOS - Estilo tarjetas como en citas */}
           {activeTab === 'testimonios' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div className="space-y-6">
               {/* Pendientes */}
               <div className="admin-card" style={{ padding: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: '#f59e0b' }}>⏳ Opiniones Pendientes ({pendingTestimonials.length})</h2>
+                <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#94a3b8', letterSpacing: '0.05em' }}>
+                  Opiniones Pendientes ({pendingTestimonials.length})
+                </h2>
                 {pendingTestimonials.length === 0 ? (
-                  <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '1rem' }}>No hay opiniones pendientes de aprobación</p>
+                  <p style={{ color: '#64748b', textAlign: 'center', padding: '2rem' }}>No hay opiniones pendientes de aprobación</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div className="space-y-3">
                     {pendingTestimonials.map((t) => (
-                      <div key={t.id} style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '12px', padding: '1rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
-                          <div>
-                            <p style={{ fontWeight: '600' }}>{t.customer_name}</p>
-                            <div style={{ display: 'flex', color: '#f59e0b', fontSize: '0.8rem', margin: '0.25rem 0' }}>
-                              {'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}
+                      <div key={t.id} className="bg-[#1e293b] border border-[#334155] rounded-lg p-4">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
+                          <div className="flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                              <p className="font-semibold text-white">{t.customer_name}</p>
+                              <div className="flex text-yellow-500 text-sm">
+                                {'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}
+                              </div>
                             </div>
-                            <p style={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic' }}>"{t.comment}"</p>
-                            <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.5rem' }}>{formatDateLong(t.created_at)}</p>
+                            <p className="text-gray-300 text-sm italic mb-2">"{t.comment}"</p>
+                            <p className="text-gray-500 text-xs">{formatDateLong(t.created_at)}</p>
                           </div>
-                          <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button onClick={() => approveTestimonial(t.id)} className="btn-success">✅ Aprobar</button>
-                            <button onClick={() => deleteTestimonial(t.id)} className="btn-danger">🗑️ Eliminar</button>
+                          <div className="flex gap-2">
+                            <button onClick={() => approveTestimonial(t.id)} className="bg-green-700 hover:bg-green-600 text-green-200 text-xs px-3 py-1.5 rounded transition">Aprobar</button>
+                            <button onClick={() => deleteTestimonial(t.id)} className="bg-red-900 hover:bg-red-800 text-red-300 text-xs px-3 py-1.5 rounded transition">Eliminar</button>
                           </div>
                         </div>
                       </div>
@@ -513,23 +580,27 @@ export function AdminDashboard() {
 
               {/* Aprobados */}
               <div className="admin-card" style={{ padding: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: '#34d399' }}>✅ Opiniones Aprobadas ({approvedTestimonials.length})</h2>
+                <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#94a3b8', letterSpacing: '0.05em' }}>
+                  Opiniones Aprobadas ({approvedTestimonials.length})
+                </h2>
                 {approvedTestimonials.length === 0 ? (
-                  <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '1rem' }}>No hay opiniones aprobadas aún</p>
+                  <p style={{ color: '#64748b', textAlign: 'center', padding: '2rem' }}>No hay opiniones aprobadas aún</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div className="space-y-3">
                     {approvedTestimonials.map((t) => (
-                      <div key={t.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '1rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
-                          <div>
-                            <p style={{ fontWeight: '600' }}>{t.customer_name}</p>
-                            <div style={{ display: 'flex', color: '#f59e0b', fontSize: '0.8rem', margin: '0.25rem 0' }}>
-                              {'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}
+                      <div key={t.id} className="bg-[#1e293b] border border-[#334155] rounded-lg p-4">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
+                          <div className="flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                              <p className="font-semibold text-white">{t.customer_name}</p>
+                              <div className="flex text-yellow-500 text-sm">
+                                {'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}
+                              </div>
                             </div>
-                            <p style={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic' }}>"{t.comment}"</p>
-                            <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.5rem' }}>{formatDateLong(t.created_at)}</p>
+                            <p className="text-gray-300 text-sm italic mb-2">"{t.comment}"</p>
+                            <p className="text-gray-500 text-xs">{formatDateLong(t.created_at)}</p>
                           </div>
-                          <button onClick={() => deleteTestimonial(t.id)} className="btn-danger">🗑️ Eliminar</button>
+                          <button onClick={() => deleteTestimonial(t.id)} className="bg-red-900 hover:bg-red-800 text-red-300 text-xs px-3 py-1.5 rounded transition">Eliminar</button>
                         </div>
                       </div>
                     ))}
