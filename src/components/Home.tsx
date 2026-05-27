@@ -429,7 +429,6 @@ export function Home() {
             
             <div className="lc-hours-card" style={{ marginBottom: '2rem' }}>
               <div className="lc-hours-item">
-                <span className="lc-hours-icon">⏰</span>
                 <div>
                   <div className="lc-hours-label">LUNES A SÁBADO</div>
                   <div className="lc-hours-value" style={{ color: '#0eb8d0' }}>8:00am - 6:00pm</div>
@@ -437,7 +436,6 @@ export function Home() {
               </div>
               <div className="lc-hours-divider" />
               <div className="lc-hours-item">
-                <span className="lc-hours-icon">📍</span>
                 <div>
                   <div className="lc-hours-label">UBICACIÓN</div>
                   <div className="lc-hours-value">Bagaces, Guanacaste</div>
