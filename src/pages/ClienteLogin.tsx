@@ -27,6 +27,23 @@ export function ClienteLogin() {
     setLoading(false)
   }
 
+  const handleGoogleSignIn = async () => {
+    setError('')
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      })
+      if (error) {
+        setError('❌ Error al iniciar con Google: ' + error.message)
+      }
+    } catch (err) {
+      setError('❌ Error al iniciar con Google')
+    }
+  }
+
   return (
     <div className="login-page">
       <style>{`
@@ -76,7 +93,7 @@ export function ClienteLogin() {
           z-index: 0;
         }
 
-        /* TARJETA LIQUID GLASS - MÁS SUAVE Y TRANSPARENTE */
+        /* TARJETA LIQUID GLASS */
         .liquid-glass-card {
           position: relative;
           z-index: 10;
@@ -84,18 +101,11 @@ export function ClienteLogin() {
           max-width: 340px;
           margin: 1.5rem;
           padding: 1.6rem 1.4rem;
-          
-          /* EFECTO LIQUID GLASS MÁS SUAVE */
           background: rgba(255, 255, 255, 0.04);
           backdrop-filter: blur(10px);
           border-radius: 28px;
-          
-          /* BORDE SUTIL */
           border: 1px solid rgba(255, 255, 255, 0.15);
-          box-shadow: 
-            0 8px 32px 0 rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
-          
+          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -103,17 +113,6 @@ export function ClienteLogin() {
           transform: translateY(-3px);
           border-color: rgba(14, 184, 208, 0.3);
           box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Logo más pequeño */
-        .login-logo {
-          text-align: center;
-          margin-bottom: 0.8rem;
-        }
-
-        .login-logo span {
-          font-size: 2.5rem;
-          display: inline-block;
         }
 
         .login-title {
@@ -132,7 +131,6 @@ export function ClienteLogin() {
           margin-bottom: 1.2rem;
         }
 
-        /* Inputs compactos */
         .input-group {
           margin-bottom: 0.9rem;
         }
@@ -170,7 +168,6 @@ export function ClienteLogin() {
           font-size: 0.8rem;
         }
 
-        /* Enlace olvidaste contraseña */
         .forgot-link {
           display: block;
           text-align: right;
@@ -185,7 +182,6 @@ export function ClienteLogin() {
           color: #0eb8d0;
         }
 
-        /* Botón login compacto */
         .login-btn {
           width: 100%;
           padding: 0.7rem;
@@ -211,7 +207,6 @@ export function ClienteLogin() {
           cursor: not-allowed;
         }
 
-        /* Separador */
         .divider {
           display: flex;
           align-items: center;
@@ -232,7 +227,6 @@ export function ClienteLogin() {
           padding: 0 0.8rem;
         }
 
-        /* Botón Google */
         .google-btn {
           width: 100%;
           display: flex;
@@ -255,7 +249,6 @@ export function ClienteLogin() {
           border-color: rgba(14, 184, 208, 0.4);
         }
 
-        /* Enlace registro */
         .register-link {
           text-align: center;
           margin-top: 1rem;
@@ -273,7 +266,6 @@ export function ClienteLogin() {
           text-decoration: underline;
         }
 
-        /* Error */
         .error-message {
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.2);
@@ -285,7 +277,6 @@ export function ClienteLogin() {
           margin-bottom: 1rem;
         }
 
-        /* Spinner */
         .spinner {
           width: 16px;
           height: 16px;
@@ -300,7 +291,6 @@ export function ClienteLogin() {
           to { transform: rotate(360deg); }
         }
 
-        /* Responsive móvil */
         @media (max-width: 480px) {
           .liquid-glass-card {
             max-width: 300px;
@@ -309,9 +299,6 @@ export function ClienteLogin() {
           }
           .login-title {
             font-size: 1.2rem;
-          }
-          .login-logo span {
-            font-size: 2.2rem;
           }
           .input-field {
             padding: 0.55rem 0.8rem;
@@ -334,7 +321,7 @@ export function ClienteLogin() {
           <div className="input-group">
             <label>Correo electrónico</label>
             <input
-              type="gmail"
+              type="email"
               placeholder="cliente@gmail.com"
               className="input-field"
               value={email}
@@ -365,7 +352,7 @@ export function ClienteLogin() {
             <span>o</span>
           </div>
 
-          <button type="button" className="google-btn" onClick={() => console.log('Google login')}>
+          <button type="button" className="google-btn" onClick={handleGoogleSignIn}>
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
