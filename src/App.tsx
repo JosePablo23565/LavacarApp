@@ -6,8 +6,7 @@ import { AdminLogin } from './pages/AdminLogin'
 import { AdminDashboard } from './pages/AdminDashboard'
 import { Contact } from './components/Contact'
 import { Opiniones } from './components/Opiniones'
-import { ClienteLogin } from './pages/ClienteLogin'
-import { ClienteRegistro } from './pages/ClienteRegistro'
+import { ClienteAuth } from './pages/ClienteAuth'
 import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
 
@@ -356,10 +355,6 @@ function NavBar() {
                 <span className="nav-link-icon">🔐</span>
                 <span>Acceder</span>
               </Link>
-              <Link to="/registro" className="nav-link" onClick={cerrarMenu}>
-                <span className="nav-link-icon">📝</span>
-                <span>Registrarse</span>
-              </Link>
             </>
           ) : (
             <>
@@ -432,9 +427,9 @@ function App() {
               </RutaProtegida>
             } />
             
-            {/* Rutas públicas (sin login) */}
-            <Route path="/acceder" element={<ClienteLogin />} />
-            <Route path="/registro" element={<ClienteRegistro />} />
+            {/* Rutas públicas */}
+            <Route path="/acceder" element={<ClienteAuth />} />
+            <Route path="/registro" element={<Navigate to="/acceder" replace />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
