@@ -1,16 +1,36 @@
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
 import { Home } from './components/Home'
 import { AppointmentForm } from './components/AppointmentForm'
 import { AdminLogin } from './pages/AdminLogin'
 import { AdminDashboard } from './pages/AdminDashboard'
 import { Contact } from './components/Contact'
 import { Opiniones } from './components/Opiniones'
+import { ClienteLogin } from './pages/ClienteLogin'
+import { ClienteRegistro } from './pages/ClienteRegistro'
 import { useState, useEffect } from 'react'
+import { useAuth } from './context/AuthContext'
+
+// Componente para rutas protegidas
+function RutaProtegida({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Cargando...</div>
+  }
+
+  if (!user) {
+    return <Navigate to="/acceder" replace />
+  }
+
+  return <>{children}</>
+}
 
 function NavBar() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [scrolling, setScrolling] = useState(false)
   const location = useLocation()
+  const { user, perfil, signOut } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,12 +59,17 @@ function NavBar() {
     setMenuAbierto(false)
   }
 
+  const handleLogout = async () => {
+    await signOut()
+    cerrarMenu()
+  }
+
+  // Links base (siempre visibles)
   const navLinks = [
     { path: '/', name: 'Inicio', icon: '🏠' },
     { path: '/agendar', name: 'Agendar', icon: '📅' },
     { path: '/contacto', name: 'Contacto', icon: '📞' },
     { path: '/opiniones', name: 'Opiniones', icon: '⭐' },
-    { path: '/login', name: 'Admin', icon: '🔐' },
   ]
 
   const isActive = (path: string) => {
@@ -58,7 +83,6 @@ function NavBar() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap');
 
-        /* Ocultar cualquier navbar antiguo que pueda existir */
         header:not(.navbar-modern), 
         nav:not(.navbar-modern),
         .old-navbar {
@@ -139,7 +163,6 @@ function NavBar() {
           50% { opacity: 0.5; transform: scale(1.3); }
         }
 
-        /* Botón de 3 rayitas que se convierte en X */
         .menu-btn {
           width: 48px;
           height: 48px;
@@ -177,20 +200,10 @@ function NavBar() {
           transition: all 0.3s ease;
         }
 
-        /* Tres rayitas */
-        .menu-icon span:nth-child(1) {
-          top: 4px;
-        }
+        .menu-icon span:nth-child(1) { top: 4px; }
+        .menu-icon span:nth-child(2) { top: 11px; }
+        .menu-icon span:nth-child(3) { top: 18px; }
 
-        .menu-icon span:nth-child(2) {
-          top: 11px;
-        }
-
-        .menu-icon span:nth-child(3) {
-          top: 18px;
-        }
-
-        /* Cuando está abierto se convierten en X */
         .menu-icon.open span:nth-child(1) {
           transform: rotate(45deg);
           top: 11px;
@@ -222,7 +235,6 @@ function NavBar() {
           visibility: visible;
         }
 
-        /* Menú que sale desde la DERECHA */
         .nav-menu {
           position: fixed;
           top: 0;
@@ -311,7 +323,6 @@ function NavBar() {
             </div>
           </Link>
 
-          {/* Botón de 3 rayitas que se convierte en X */}
           <button className="menu-btn" onClick={() => setMenuAbierto(!menuAbierto)}>
             <div className={`menu-icon ${menuAbierto ? 'open' : ''}`}>
               <span></span>
@@ -322,10 +333,8 @@ function NavBar() {
         </div>
       </nav>
 
-      {/* Overlay para cerrar el menú al hacer clic fuera */}
       <div className={`menu-overlay ${menuAbierto ? 'open' : ''}`} onClick={cerrarMenu} />
 
-      {/* Menú lateral que sale DESDE LA DERECHA */}
       <div className={`nav-menu ${menuAbierto ? 'open' : ''}`}>
         <div className="nav-links">
           {navLinks.map((link) => (
@@ -339,6 +348,39 @@ function NavBar() {
               <span>{link.name}</span>
             </Link>
           ))}
+
+          {/* Links condicionales según autenticación */}
+          {!user ? (
+            <>
+              <Link to="/acceder" className="nav-link" onClick={cerrarMenu}>
+                <span className="nav-link-icon">🔐</span>
+                <span>Acceder</span>
+              </Link>
+              <Link to="/registro" className="nav-link" onClick={cerrarMenu}>
+                <span className="nav-link-icon">📝</span>
+                <span>Registrarse</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <div className="nav-link" style={{ cursor: 'default', background: 'rgba(14,184,208,0.1)' }}>
+                <span className="nav-link-icon">👤</span>
+                <span>Hola, {perfil?.nombre || user.email?.split('@')[0]}</span>
+              </div>
+              <Link to="/login" className="nav-link" onClick={cerrarMenu}>
+                <span className="nav-link-icon">👑</span>
+                <span>Admin</span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="nav-link"
+                style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                <span className="nav-link-icon">🚪</span>
+                <span>Cerrar Sesión</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -350,40 +392,54 @@ function NavBar() {
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen">
-        <Routes>
-          <Route path="/" element={
-            <>
-              <NavBar />
-              <Home />
-            </>
-          } />
-          
-          <Route path="/agendar" element={
-            <>
-              <NavBar />
-              <AppointmentForm />
-            </>
-          } />
-          
-          <Route path="/contacto" element={
-            <>
-              <NavBar />
-              <Contact />
-            </>
-          } />
-          
-          <Route path="/opiniones" element={
-            <>
-              <NavBar />
-              <Opiniones />
-            </>
-          } />
-          
-          <Route path="/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Routes>
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen">
+          <Routes>
+            {/* Rutas protegidas (requieren login) */}
+            <Route path="/" element={
+              <RutaProtegida>
+                <>
+                  <NavBar />
+                  <Home />
+                </>
+              </RutaProtegida>
+            } />
+            
+            <Route path="/agendar" element={
+              <RutaProtegida>
+                <>
+                  <NavBar />
+                  <AppointmentForm />
+                </>
+              </RutaProtegida>
+            } />
+            
+            <Route path="/contacto" element={
+              <RutaProtegida>
+                <>
+                  <NavBar />
+                  <Contact />
+                </>
+              </RutaProtegida>
+            } />
+            
+            <Route path="/opiniones" element={
+              <RutaProtegida>
+                <>
+                  <NavBar />
+                  <Opiniones />
+                </>
+              </RutaProtegida>
+            } />
+            
+            {/* Rutas públicas (sin login) */}
+            <Route path="/acceder" element={<ClienteLogin />} />
+            <Route path="/registro" element={<ClienteRegistro />} />
+            <Route path="/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </div>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
