@@ -9,9 +9,12 @@ export function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        console.log('🔄 AuthCallback: Iniciando...')
+        
         const { data: { session } } = await supabase.auth.getSession()
         
         if (!session) {
+          console.log('❌ No hay sesión, redirigiendo a /acceder')
           navigate('/acceder')
           return
         }
@@ -22,15 +25,20 @@ export function AuthCallback() {
                           session.user.user_metadata?.full_name || 
                           session.user.email?.split('@')[0] || ''
 
+        console.log('✅ Usuario autenticado:', { userId, userEmail, userNombre })
+
         // Verificar si ya existe un perfil
-        let { data: perfil, error } = await supabase
+        const { data: perfil, error } = await supabase
           .from('perfiles')
           .select('*')
           .eq('id', userId)
-          .maybeSingle()  // ← usa maybeSingle en lugar de single
+          .maybeSingle()
+
+        console.log('📝 Perfil encontrado:', perfil)
 
         // Si no existe perfil, crearlo
         if (!perfil) {
+          console.log('🆕 Creando nuevo perfil...')
           const { error: insertError } = await supabase
             .from('perfiles')
             .insert([
@@ -43,24 +51,28 @@ export function AuthCallback() {
             ])
           
           if (insertError) {
-            console.error('Error al crear perfil:', insertError)
+            console.error('❌ Error al crear perfil:', insertError)
+            navigate('/acceder')
+            return
           }
           
-          // Redirigir a completar perfil (falta teléfono)
+          console.log('✅ Perfil creado, redirigiendo a /completar-perfil')
           navigate('/completar-perfil')
           return
         }
 
-        // Si el perfil existe pero falta teléfono, redirigir a completar
-        if (!perfil.telefono) {
+        // Si el perfil existe pero falta el teléfono, redirigir a completar
+        if (!perfil.telefono || perfil.telefono === '') {
+          console.log('📞 Teléfono faltante, redirigiendo a /completar-perfil')
           navigate('/completar-perfil')
           return
         }
 
         // Si todo está completo, ir al home
+        console.log('🏠 Perfil completo, redirigiendo al home')
         navigate('/')
       } catch (err) {
-        console.error('Error en callback:', err)
+        console.error('❌ Error en callback:', err)
         navigate('/acceder')
       } finally {
         setLoading(false)

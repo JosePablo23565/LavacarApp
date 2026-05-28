@@ -12,35 +12,24 @@ export function CompleteProfile() {
   const [userId, setUserId] = useState('')
 
   useEffect(() => {
-    // Obtener el usuario actual
     const getUser = async () => {
+      console.log('🔄 CompleteProfile: Cargando usuario...')
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUserId(user.id)
         setEmail(user.email || '')
-        // Si Google ya dio un nombre, lo usamos como sugerencia
         if (user.user_metadata?.nombre) {
           setNombre(user.user_metadata.nombre)
         }
-        // Verificar si ya tiene perfil completo (usando maybeSingle)
-        const { data: perfil } = await supabase
-          .from('perfiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle()
-        
-        if (perfil && perfil.nombre && perfil.telefono) {
-          // Ya tiene todos los datos, redirigir al home
-          navigate('/')
-        }
+        console.log('✅ Usuario cargado:', { userId: user.id, email: user.email })
       } else {
+        console.log('❌ No hay usuario, redirigiendo')
         navigate('/acceder')
       }
     }
     getUser()
   }, [navigate])
 
-  // Validación de teléfono: solo números, máximo 8 dígitos
   const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     const onlyNumbers = value.replace(/[^0-9]/g, '')
@@ -66,39 +55,25 @@ export function CompleteProfile() {
     setLoading(true)
 
     try {
-      // 1. Actualizar metadata del usuario en Auth
+      console.log('💾 Guardando perfil...')
+      
+      // Actualizar metadata
       const { error: updateError } = await supabase.auth.updateUser({
         data: { nombre, telefono }
       })
-
       if (updateError) throw updateError
 
-      // 2. Verificar si ya existe perfil (usando maybeSingle)
-      const { data: existingProfile, error: selectError } = await supabase
+      // Actualizar o crear perfil
+      const { error: upsertError } = await supabase
         .from('perfiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle()
+        .upsert({ id: userId, nombre, telefono, email })
+      
+      if (upsertError) throw upsertError
 
-      if (existingProfile) {
-        // Actualizar perfil existente
-        const { error: updateProfileError } = await supabase
-          .from('perfiles')
-          .update({ nombre, telefono, email })
-          .eq('id', userId)
-        
-        if (updateProfileError) throw updateProfileError
-      } else {
-        // Crear nuevo perfil
-        const { error: insertError } = await supabase
-          .from('perfiles')
-          .insert([{ id: userId, nombre, telefono, email }])
-        
-        if (insertError) throw insertError
-      }
-
+      console.log('✅ Perfil guardado, redirigiendo al home')
       navigate('/')
     } catch (err: any) {
+      console.error('❌ Error:', err)
       setError(err.message || 'Error al guardar los datos')
     } finally {
       setLoading(false)
