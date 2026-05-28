@@ -246,7 +246,7 @@ export function Home() {
           z-index: 1;
         }
 
-        .lc-glow { position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(14,184,208,.1) 0%,transparent 70%);animation:lcGlowPulse 4s ease-in-out infinite;z-index:1;pointer-events:none; }
+        .lc-glow { position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;animation:lcGlowPulse 4s ease-in-out infinite;z-index:1;pointer-events:none; }
         .lc-car-bg { position:absolute;bottom:0;right:-2%;font-size:300px;line-height:1;opacity:.05;animation:lcFloatCar 6s ease-in-out infinite;pointer-events:none;z-index:1; }
         .lc-hero-content { position:relative;z-index:2;text-align:center;padding:2rem;max-width:850px; }
         .lc-badge { display:inline-block;background:rgba(14,184,208,.12);border:1px solid rgba(14,184,208,.3);color:#0eb8d0;padding:.4rem 1rem;border-radius:999px;font-size:.8rem;margin-bottom:1.5rem;animation:lcFadeUp .8s ease both; }
@@ -307,176 +307,176 @@ export function Home() {
         .lc-section-sub { color:rgba(255,255,255,.5);font-size:.95rem;line-height:1.75;max-width:520px; }
 
         /* Fondo de la sección de servicios con slideshow */
-.services-section {
-  position: relative;
-  overflow: hidden;
-}
+        .services-section {
+          position: relative;
+          overflow: hidden;
+        }
 
-.services-bg-slideshow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
+        .services-bg-slideshow {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+        }
 
-.services-bg-slideshow .slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transition: opacity 1.5s ease-in-out;
-}
+        .services-bg-slideshow .slide {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          opacity: 0;
+          transition: opacity 1.5s ease-in-out;
+        }
 
-.services-bg-slideshow .slide.active {
-  opacity: 1;
-}
+        .services-bg-slideshow .slide.active {
+          opacity: 1;
+        }
 
-.services-bg-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  z-index: 1;
-}
+        .services-bg-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.65);
+          z-index: 1;
+        }
 
-.services-section .lc-section {
-  position: relative;
-  z-index: 2;
-  max-width: 420px;
-  margin: 0 auto;
-}
+        .services-section .lc-section {
+          position: relative;
+          z-index: 2;
+          max-width: 420px;
+          margin: 0 auto;
+        }
 
-/* TARJETAS DE SERVICIOS MÁS ANGOSTAS */
-.lc-service-card {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 20px;
-  padding: 0.8rem;
-  transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
+        /* TARJETAS DE SERVICIOS MÁS ANGOSTAS */
+        .lc-service-card {
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          border-radius: 20px;
+          padding: 0.8rem;
+          transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+          position: relative;
+          overflow: hidden;
+          cursor: pointer;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+          min-height: 180px;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+        }
 
-.lc-service-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.5));
-  border-radius: 20px;
-  z-index: 0;
-  transition: background 0.3s ease;
-}
+        .lc-service-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.5));
+          border-radius: 20px;
+          z-index: 0;
+          transition: background 0.3s ease;
+        }
 
-.lc-service-card:hover::before {
-  background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
-}
+        .lc-service-card:hover::before {
+          background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+        }
 
-.lc-service-card > div, 
-.lc-service-card > .lc-svc-name, 
-.lc-service-card > .lc-svc-price, 
-.lc-service-card > .lc-svc-desc,
-.lc-service-card > .lc-svc-time {
-  position: relative;
-  z-index: 2;
-}
+        .lc-service-card > div, 
+        .lc-service-card > .lc-svc-name, 
+        .lc-service-card > .lc-svc-price, 
+        .lc-service-card > .lc-svc-desc,
+        .lc-service-card > .lc-svc-time {
+          position: relative;
+          z-index: 2;
+        }
 
-.lc-service-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 20px 35px -12px rgba(14, 184, 208, 0.3);
-}
+        .lc-service-card:hover {
+          transform: translateY(-6px) scale(1.02);
+        }
 
-/* GRID CON TARJETAS ESTRECHAS */
-.lc-services-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
-  gap: 0.8rem; 
-  margin-top: 2rem;
-  padding: 0 2rem;
-}
+        /* GRID CON TARJETAS ESTRECHAS */
+        .lc-services-grid { 
+          display: grid; 
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+          gap: 0.8rem; 
+          margin-top: 2rem;
+          padding: 0 2rem;
+        }
 
-.lc-svc-name { 
-  font-family: 'Sora', sans-serif; 
-  font-size: 0.85rem; 
-  font-weight: 600; 
-  margin-bottom: 0.2rem; 
-  color: #fff; 
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5); 
-}
+        .lc-svc-name { 
+          font-family: 'Sora', sans-serif; 
+          font-size: 0.85rem; 
+          font-weight: 600; 
+          margin-bottom: 0.2rem; 
+          color: #fff; 
+          text-shadow: 0 1px 3px rgba(0,0,0,0.5); 
+        }
 
-.lc-svc-price { 
-  font-family: 'Sora', sans-serif; 
-  font-size: 1rem; 
-  font-weight: 700; 
-  color: #0eb8d0; 
-  margin-bottom: 0.3rem; 
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
-}
+        .lc-svc-price { 
+          font-family: 'Sora', sans-serif; 
+          font-size: 1rem; 
+          font-weight: 700; 
+          color: #0eb8d0; 
+          margin-bottom: 0.3rem; 
+          text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
+        }
 
-.lc-svc-desc { 
-  font-size: 0.65rem; 
-  color: rgba(255, 255, 255, 0.9); 
-  line-height: 1.35; 
-  margin-bottom: 0.3rem; 
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
-}
+        .lc-svc-desc { 
+          font-size: 0.65rem; 
+          color: rgba(255, 255, 255, 0.9); 
+          line-height: 1.35; 
+          margin-bottom: 0.3rem; 
+          text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
+        }
 
-.lc-svc-time { 
-  display: inline-flex; 
-  align-items: center; 
-  gap: 0.2rem; 
-  margin-top: 0.3rem; 
-  font-size: 0.6rem; 
-  color: rgba(255, 255, 255, 0.9); 
-  background: rgba(0,0,0,0.5); 
-  padding: 0.2rem 0.5rem; 
-  border-radius: 99px; 
-  width: fit-content; 
-}
+        .lc-svc-time { 
+          display: inline-flex; 
+          align-items: center; 
+          gap: 0.2rem; 
+          margin-top: 0.3rem; 
+          font-size: 0.6rem; 
+          color: rgba(255, 255, 255, 0.9); 
+          background: rgba(0,0,0,0.5); 
+          padding: 0.2rem 0.5rem; 
+          border-radius: 99px; 
+          width: fit-content; 
+        }
 
-/* Responsive para móvil */
-@media (max-width: 768px) {
-  .services-section .lc-section {
-    max-width: 100%;
-    padding: 3rem 1rem;
-  }
-  
-  .lc-services-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
-  gap: 0.6rem; 
-  margin-top: 2rem;
-  padding: 0 3rem;
-}
-  
-  .lc-service-card {
-    padding: 0.7rem;
-    min-height: 160px;
-  }
-  
-  .lc-svc-name { font-size: 0.9rem; }
-  .lc-svc-price { font-size: 1rem; }
-  .lc-svc-desc { font-size: 0.7rem; }
-  .lc-svc-time { font-size: 0.65rem; }
-}
+        /* Responsive para móvil */
+        @media (max-width: 768px) {
+          .services-section .lc-section {
+            max-width: 100%;
+            padding: 3rem 1rem;
+          }
+          
+          .lc-services-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 0.6rem; 
+            margin-top: 2rem;
+            padding: 0 3rem;
+          }
+          
+          .lc-service-card {
+            padding: 0.7rem;
+            min-height: 160px;
+          }
+          
+          .lc-svc-name { font-size: 0.9rem; }
+          .lc-svc-price { font-size: 1rem; }
+          .lc-svc-desc { font-size: 0.7rem; }
+          .lc-svc-time { font-size: 0.65rem; }
+        }
+        
         /* ========== SECCIÓN DE OPINIONES REDISEÑADA ========== */
         .opiniones-section {
           position: relative;
@@ -530,7 +530,6 @@ export function Home() {
         .opinion-card:hover {
           transform: translateY(-8px);
           border-color: rgba(14, 184, 208, 0.5);
-          box-shadow: 0 20px 35px -12px rgba(14, 184, 208, 0.25);
           background: rgba(20, 25, 45, 0.6);
         }
 
@@ -561,7 +560,7 @@ export function Home() {
           width: 45px;
           height: 45px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #6aa4ef, #06094b);
+          background: linear-gradient(135deg, #1494ea, #010322);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -617,8 +616,8 @@ export function Home() {
           .lc-section{padding:4rem 1.25rem;}
           .lc-hours-card{scale:0.9;}
           .lc-services-grid { grid-template-columns:1fr; }
-          .opiniones-grid { grid-template-columns:1fr; gap:1.2rem; }
-          .opinion-card { padding:1.3rem; }
+          .opiniones-grid { grid-template-columns:1fr; gap:1rem; }
+          .opinion-card { padding:0.8rem; }
           .opiniones-section { padding:3rem 1.25rem; }
         }
       `}</style>
@@ -655,7 +654,7 @@ export function Home() {
 
           <div className="lc-hero-content" style={{ paddingBottom: '3rem' }}>
             <div className="lc-badge">Bagaces, Guanacaste — Costa Rica</div>
-            <h1>Tu auto <span>merece</span><br />el mejor cuidado</h1>
+           <h1>Autolavado y Servicios<br /><span>Camaro Fraterno</span></h1>
             <p>Lavado profesional, encerado y limpieza de tapizado.<br />Agendá tu cita en segundos.</p>
             
             <div className="lc-hours-card" style={{ marginBottom: '2rem' }}>
@@ -739,157 +738,201 @@ export function Home() {
 
         {/* SECCIÓN DE OPINIONES REDISEÑADA */}
         <section id="opiniones" className="opiniones-section">
-  <div className="opiniones-bg"></div>
-  <div className="opiniones-overlay"></div>
-  
-  <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-    <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-      <span className="lc-tag">OPINIONES</span>
-      <h2 className="lc-section-title">Lo que dicen nuestros clientes</h2>
-      <p className="lc-section-sub" style={{ margin: '0 auto' }}>Opiniones reales de nuestros clientes</p>
-    </div>
-    
-    <div className="opiniones-grid">
-      {loadingTestimonials ? (
-        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem' }}>Cargando opiniones...</div>
-      ) : testimonials.length === 0 ? (
-        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem', color: 'rgba(255,255,255,.5)' }}>No hay opiniones aún. ¡Sé el primero en opinar!</div>
-      ) : (
-        testimonials.map((testimonial) => (
-          <div key={testimonial.id} className="opinion-card">
-            <div className="opinion-stars">
-              {"★".repeat(testimonial.rating || 5)}
-            </div>
-            <div className="opinion-text">"{testimonial.comment}"</div>
-            <div className="opinion-author">
-              <div className="opinion-avatar">
-                {testimonial.customer_name?.charAt(0) || 'C'}
-              </div>
-              <div className="opinion-author-info">
-                <div className="opinion-name">{testimonial.customer_name || 'Cliente'}</div>
-                <div className="opinion-date">{new Date(testimonial.created_at).toLocaleDateString('es-CR')}</div>
-              </div>
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-    
-    <div style={{ textAlign: 'center', marginTop: '3rem' }} className="lc-reveal">
-      <button className="lc-btn-outline" onClick={() => navigate('/opiniones')}>Ver todas las opiniones</button>
-    </div>
-  </div>
-</section>
-
-        {/* SECCIÓN DE CONTACTO COMPLETA */}
-        <section id="contacto" style={{ padding: '5rem 2rem', background: '#0a0e1a', borderTop: '1px solid rgba(255,255,255,.06)' }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-              <span className="lc-tag">CONTACTO</span>
-              <h2 className="lc-section-title" style={{ fontSize: '1.8rem' }}>Hablemos</h2>
-              <p className="lc-section-sub" style={{ margin: '0 auto' }}>Estamos aquí para ayudarte</p>
+          <div className="opiniones-bg"></div>
+          <div className="opiniones-overlay"></div>
+          
+          <div style={{ maxWidth: 320, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+            <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <span className="lc-tag">OPINIONES</span>
+              <h2 className="lc-section-title">Lo que dicen nuestros clientes</h2>
+              <p className="lc-section-sub" style={{ margin: '0 auto' }}>Opiniones reales de nuestros clientes</p>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-              <div>
-                <div style={{ background: 'rgba(17, 24, 39, 0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden', marginBottom: '1.5rem' }}>
-                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '0.8rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
-                    <p style={{ fontSize: '0.75rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>INFORMACIÓN DE CONTACTO</p>
+            <div className="opiniones-grid">
+              {loadingTestimonials ? (
+                <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem' }}>Cargando opiniones...</div>
+              ) : testimonials.length === 0 ? (
+                <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem', color: 'rgba(255,255,255,.5)' }}>No hay opiniones aún. ¡Sé el primero en opinar!</div>
+              ) : (
+                testimonials.map((testimonial) => (
+                  <div key={testimonial.id} className="opinion-card">
+                    <div className="opinion-stars">
+                      {"★".repeat(testimonial.rating || 5)}
+                    </div>
+                    <div className="opinion-text">"{testimonial.comment}"</div>
+                    <div className="opinion-author">
+                      <div className="opinion-avatar">
+                        {testimonial.customer_name?.charAt(0) || 'C'}
+                      </div>
+                      <div className="opinion-author-info">
+                        <div className="opinion-name">{testimonial.customer_name || 'Cliente'}</div>
+                        <div className="opinion-date">{new Date(testimonial.created_at).toLocaleDateString('es-CR')}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ padding: '1.25rem' }}>
+                ))
+              )}
+            </div>
+            
+            <div style={{ textAlign: 'center', marginTop: '3rem' }} className="lc-reveal">
+              <button className="lc-btn-outline" onClick={() => navigate('/opiniones')}>Ver todas las opiniones</button>
+            </div>
+          </div>
+        </section>
+
+        {/* SECCIÓN DE CONTACTO SIMPLIFICADA CON LIQUID GLASS */}
+          <section id="contacto" style={{ 
+            padding: '4rem 1.5rem', 
+            backgroundImage: 'url("/fondo-contacto.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            position: 'relative',
+            borderTop: '1px solid rgba(255,255,255,.06)'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.6)',
+              zIndex: 0
+            }}></div>
+            
+            <div style={{ maxWidth: 290, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+              <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <span className="lc-tag">CONTACTO</span>
+                <h2 className="lc-section-title" style={{ fontSize: '1.6rem' }}>Hablemos</h2>
+                <p className="lc-section-sub" style={{ margin: '0 auto', color: 'rgba(255,255,255,0.9)' }}>Estamos aquí para ayudarte</p>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '380px', margin: '0 auto' }}>
+                {/* TARJETA DE INFORMACIÓN */}
+                <div style={{ 
+                  background: 'rgba(17, 24, 39, 0)', 
+                  backdropFilter: 'blur(12px)', 
+                  border: '1px solid rgba(255, 255, 255, 0.12)', 
+                  borderRadius: '20px', 
+                  overflow: 'hidden',
+                  
+                  transition: 'transform 0.3s ease'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(14,184,208,0.3)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}>
+                  
+                  <div style={{ background: 'linear-gradient(135deg, rgba(14,184,208,0.15), rgba(26,111,212,0.05))', padding: '0.6rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                    <p style={{ fontSize: '0.7rem', color: '#0ea6d0', letterSpacing: '0.06em', fontWeight: 500 }}>INFORMACIÓN DE CONTACTO</p>
+                  </div>
+                  
+                  <div style={{ padding: '1rem' }}>
+                    {/* DIRECCIÓN */}
                     <div 
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.8rem', padding: '0.4rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
                       onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Bagaces+Guanacaste+Costa+Rica', '_blank')}
                     >
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.1rem' }}>📍</span>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(14,184,208,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1rem' }}>📍</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>DIRECCIÓN</div>
-                        <div style={{ fontSize: '0.85rem', color: '#fff' }}>Bagaces, Guanacaste, Costa Rica</div>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}>DIRECCIÓN</div>
+                        <div style={{ fontSize: '0.8rem', color: '#fff' }}>Bagaces, Guanacaste, Costa Rica</div>
                       </div>
                     </div>
                     
+                    {/* WHATSAPP 1 */}
                     <a 
                       href="https://wa.me/50683606680"
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.8rem', padding: '0.4rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
                     >
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(37,211,102,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.1rem' }}>📱</span>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(37,211,102,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1rem' }}>📱</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>WHATSAPP</div>
-                        <div style={{ fontSize: '0.85rem', color: '#25d366' }}>+506 8360-6680</div>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}>WHATSAPP</div>
+                        <div style={{ fontSize: '0.8rem', color: '#25d366' }}>+506 8360-6680</div>
                       </div>
                     </a>
 
+                    {/* WHATSAPP 2 */}
                     <a 
                       href="https://wa.me/50689594947"
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.8rem', padding: '0.4rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
                     >
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(37,211,102,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.1rem' }}>📱</span>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(37,211,102,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1rem' }}>📱</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>WHATSAPP</div>
-                        <div style={{ fontSize: '0.85rem', color: '#25d366' }}>+506 8959-4947</div>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}>WHATSAPP</div>
+                        <div style={{ fontSize: '0.8rem', color: '#25d366' }}>+506 8959-4947</div>
                       </div>
                     </a>
                     
+                    {/* CORREO */}
                     <a 
                       href="mailto:lavacar@gmail.com"
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.8rem', padding: '0.4rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
                     >
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.1rem' }}>✉️</span>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(14,184,208,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1rem' }}>✉️</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>CORREO</div>
-                        <div style={{ fontSize: '0.85rem', color: '#0eb8d0' }}>lavacar@gmail.com</div>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}>CORREO</div>
+                        <div style={{ fontSize: '0.8rem', color: '#0eb8d0' }}>lavacar@gmail.com</div>
                       </div>
                     </a>
                     
+                    {/* HORARIO */}
                     <div 
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.5rem', borderRadius: '12px', transition: 'all 0.3s ease', background: 'transparent' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', padding: '0.4rem', borderRadius: '12px', transition: 'all 0.3s ease', background: 'transparent' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
                     >
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,184,208,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '1.1rem' }}>⏰</span>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(14,184,208,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '1rem' }}>⏰</span>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,.4)', letterSpacing: '0.04em' }}>HORARIO</div>
-                        <div style={{ fontSize: '0.85rem', color: '#fff' }}>Lunes a Sábado: 8am - 6pm</div>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}>HORARIO</div>
+                        <div style={{ fontSize: '0.8rem', color: '#fff' }}>Lunes a Sábado: 8am - 6pm</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
+                {/* GOOGLE MAPS */}
                 <div 
-                  style={{ background: 'rgba(17, 24, 39, 0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden', transition: 'all 0.3s ease', cursor: 'pointer' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(14,184,208,0.4)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.08)' }}
+                  style={{ 
+                    background: 'rgba(17, 24, 39, 0.25)', 
+                    backdropFilter: 'blur(12px)', 
+                    border: '1px solid rgba(255, 255, 255, 0.12)', 
+                    borderRadius: '20px', 
+                    overflow: 'hidden', 
+                    transition: 'all 0.3s ease', 
+                    cursor: 'pointer' 
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(14,184,208,0.3)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
                 >
-                  <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '0.8rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
-                    <p style={{ fontSize: '0.75rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>UBICACIÓN</p>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(14,184,208,0.15), rgba(26,111,212,0.05))', padding: '0.6rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                    <p style={{ fontSize: '0.7rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>UBICACIÓN</p>
                   </div>
-                  <div style={{ padding: '1rem' }}>
+                  <div style={{ padding: '0.8rem' }}>
                     <iframe
                       src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15716.123456789!2d-85.2548091!3d10.5218901!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDMxJzE4LjgiTiA4NcKwMTUnMTcuMyJX!5e0!3m2!1ses!2scr!4v1234567890"
                       width="100%"
-                      height="200"
+                      height="180"
                       style={{ border: 0, borderRadius: '12px' }}
                       allowFullScreen
                       loading="lazy"
@@ -897,86 +940,17 @@ export function Home() {
                     />
                     <button
                       onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Bagaces+Guanacaste+Costa+Rica', '_blank')}
-                      style={{ width: '100%', marginTop: '0.75rem', background: 'rgba(14,184,208,.15)', color: '#0eb8d0', border: '1px solid rgba(14,184,208,.3)', padding: '0.6rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 500, fontSize: '0.85rem', transition: 'all .2s' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,.25)'; e.currentTarget.style.color = '#fff' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,.15)'; e.currentTarget.style.color = '#0eb8d0' }}
+                      style={{ width: '90%', margin: '0 auto', display: 'block', marginTop: '0.8rem', background: 'rgba(14,184,208,0.2)', color: '#0eb8d0', border: '1px solid rgba(14,184,208,0.3)', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 500, fontSize: '0.75rem', transition: 'all .2s' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.3)'; e.currentTarget.style.color = '#fff' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.2)'; e.currentTarget.style.color = '#0eb8d0' }}
                     >
                       Abrir en Google Maps
                     </button>
                   </div>
                 </div>
               </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div 
-                  style={{ 
-                    background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.7), rgba(15, 23, 42, 0.8))', 
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(14,184,208,.2)', 
-                    borderRadius: '20px', 
-                    padding: '2rem', 
-                    textAlign: 'center', 
-                    height: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    boxShadow: '0 10px 30px -10px rgba(14,184,208,.1)',
-                    transition: 'transform 0.4s ease, box-shadow 0.4s ease'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.boxShadow = '0 25px 45px -12px rgba(14,184,208,.3)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 30px -10px rgba(14,184,208,.1)' }}
-                >
-                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '180px', height: '180px', background: 'radial-gradient(circle, rgba(14,184,208,.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
-                  
-                  <h3 style={{ 
-                    fontFamily: "'Sora',sans-serif", 
-                    fontSize: '1.6rem', 
-                    marginBottom: '0.75rem', 
-                    color: '#fff',
-                    background: 'linear-gradient(135deg, #fff, #0eb8d0)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
-                    ¿Listo para que tu auto brille?
-                  </h3>
-                  
-                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,.6)', marginBottom: '1.5rem', lineHeight: 1.5, maxWidth: '280px', marginLeft: 'auto', marginRight: 'auto' }}>
-                    Agendá tu cita ahora y disfrutá un vehículo impecable.
-                  </p>
-                  
-                  <button 
-                    style={{ 
-                      background: 'linear-gradient(135deg, #1a6fd4, #0eb8d0)', 
-                      color: '#fff', 
-                      border: 'none', 
-                      padding: '1rem', 
-                      borderRadius: '12px', 
-                      cursor: 'pointer', 
-                      fontWeight: 600, 
-                      width: '100%', 
-                      fontSize: '1rem', 
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 4px 15px rgba(14,184,208,0.3)'
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(14,184,208,0.6)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(14,184,208,0.3)' }}
-                    onClick={() => navigate('/agendar')}
-                  >
-                    Agendar mi cita ahora
-                  </button>
-                  
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.3)', marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                    <span>Sin tarjeta</span>
-                    <span>Sin registro</span>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </section>
+          </section>
         
         <footer className="lc-footer">
           <div className="lc-footer-logo">Autolavado y Servicios Camaro Fraterno</div>
