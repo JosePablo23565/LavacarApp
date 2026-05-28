@@ -6,7 +6,8 @@ import { AdminLogin } from './pages/AdminLogin'
 import { AdminDashboard } from './pages/AdminDashboard'
 import { Contact } from './components/Contact'
 import { Opiniones } from './components/Opiniones'
-import { ClienteAuth } from './pages/ClienteAuth'
+import { ClienteLogin } from './pages/ClienteLogin'
+import { ClienteRegistro } from './pages/ClienteRegistro'
 import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
 import { CompleteProfile } from './pages/CompleteProfile'
@@ -357,6 +358,10 @@ function NavBar() {
                 <span className="nav-link-icon">🔐</span>
                 <span>Acceder</span>
               </Link>
+              <Link to="/registro" className="nav-link" onClick={cerrarMenu}>
+                <span className="nav-link-icon">📝</span>
+                <span>Registrarse</span>
+              </Link>
             </>
           ) : (
             <>
@@ -430,8 +435,8 @@ function App() {
             } />
             
             {/* Rutas públicas */}
-            <Route path="/acceder" element={<ClienteAuth />} />
-            <Route path="/registro" element={<Navigate to="/acceder" replace />} />
+            <Route path="/acceder" element={<ClienteLogin />} />
+            <Route path="/registro" element={<ClienteRegistro />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/completar-perfil" element={<CompleteProfile />} />
