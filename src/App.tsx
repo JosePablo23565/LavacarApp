@@ -65,10 +65,10 @@ function NavBar() {
 
   // Links base (siempre visibles)
   const navLinks = [
-    { path: '/', name: 'Inicio', icon: '🏠' },
-    { path: '/agendar', name: 'Agendar', icon: '📅' },
-    { path: '/contacto', name: 'Contacto', icon: '📞' },
-    { path: '/opiniones', name: 'Opiniones', icon: '⭐' },
+    { path: '/', name: 'Inicio'},
+    { path: '/agendar', name: 'Agendar'},
+    { path: '/contacto', name: 'Contacto'},
+    { path: '/opiniones', name: 'Opiniones'},
   ]
 
   const isActive = (path: string) => {
@@ -346,7 +346,6 @@ function NavBar() {
               className={`nav-link ${isActive(link.path) ? 'active' : ''}`}
               onClick={cerrarMenu}
             >
-              <span className="nav-link-icon">{link.icon}</span>
               <span>{link.name}</span>
             </Link>
           ))}
@@ -355,24 +354,20 @@ function NavBar() {
           {!user ? (
             <>
               <Link to="/acceder" className="nav-link" onClick={cerrarMenu}>
-                <span className="nav-link-icon">🔐</span>
                 <span>Acceder</span>
               </Link>
               <Link to="/registro" className="nav-link" onClick={cerrarMenu}>
-                <span className="nav-link-icon">📝</span>
                 <span>Registrarse</span>
               </Link>
             </>
           ) : (
             <>
               <div className="nav-link" style={{ cursor: 'default', background: 'rgba(14,184,208,0.1)' }}>
-                <span className="nav-link-icon">👤</span>
                 <span>Hola, {perfil?.nombre || user.email?.split('@')[0]}</span>
               </div>
               {/* Solo mostrar Admin si el usuario tiene permisos */}
               {isAdmin && (
                 <Link to="/admin" className="nav-link" onClick={cerrarMenu}>
-                  <span className="nav-link-icon">👑</span>
                   <span>Admin</span>
                 </Link>
               )}
@@ -381,7 +376,6 @@ function NavBar() {
                 className="nav-link"
                 style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
               >
-                <span className="nav-link-icon">🚪</span>
                 <span>Cerrar Sesión</span>
               </button>
             </>

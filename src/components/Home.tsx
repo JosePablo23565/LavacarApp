@@ -6,6 +6,24 @@ export function Home() {
   const navigate = useNavigate()
   const [testimonials, setTestimonials] = useState<any[]>([])
   const [loadingTestimonials, setLoadingTestimonials] = useState(true)
+  
+  // Estado para el slideshow del fondo de servicios
+  const [currentBgIndex, setCurrentBgIndex] = useState(0)
+  
+  const bgImages = [
+    '/lavado-basico.jpg',
+    '/lavado-completo.jpg',
+    '/encerado.jpg',
+    '/tapizado.jpg'
+  ]
+
+  // Slideshow automático para el fondo de servicios
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % bgImages.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [bgImages.length])
 
   const fetchTestimonials = async () => {
     try {
@@ -51,7 +69,6 @@ export function Home() {
   }, [])
 
   useEffect(() => {
-    // Contadores
     const counters = [
       { id: 'counter-clientes', target: 500, suffix: '+' },
       { id: 'counter-servicios', target: 4, suffix: '' },
@@ -85,7 +102,6 @@ export function Home() {
     const statsSection = document.querySelector('.lc-stats')
     if (statsSection) counterObserver.observe(statsSection)
 
-    // Scroll reveal
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -104,6 +120,41 @@ export function Home() {
     }
   }, [])
 
+  const services = [
+    { 
+      name: 'Lavado Básico', 
+      value: 'basico', 
+      price: '$10', 
+      desc: 'Lavado exterior con agua a presión, shampoo especial y secado manual.', 
+      time: '30 min',
+      bgImage: '/lavado-basico.jpg'
+    },
+    { 
+      name: 'Lavado Completo', 
+      value: 'completo', 
+      price: '$20', 
+      desc: 'Interior y exterior. Aspirado, tablero, vidrios y limpieza de llantas.', 
+      time: '45 min',
+      bgImage: '/lavado-completo.jpg'
+    },
+    { 
+      name: 'Encerado + Lavado', 
+      value: 'encerado', 
+      price: '$35', 
+      desc: 'Lavado completo más encerado profesional para proteger y dar brillo a la pintura.', 
+      time: '60 min',
+      bgImage: '/encerado.jpg'
+    },
+    { 
+      name: 'Limpieza de Tapizado', 
+      value: 'tapizado', 
+      price: '$25', 
+      desc: 'Limpieza profunda de asientos y alfombras con extractora profesional.', 
+      time: '40 min',
+      bgImage: '/tapizado.jpg'
+    },
+  ]
+
   return (
     <>
       <style>{`
@@ -112,7 +163,6 @@ export function Home() {
         .lc-root { font-family:'DM Sans',sans-serif; background:#0a0e1a; color:#fff; overflow-x:hidden; }
         .lc-root h1,.lc-root h2,.lc-root h3 { font-family:'Sora',sans-serif; }
 
-        /* ANIMACIONES ORIGINALES */
         @keyframes lcCarFloat { 
           0%,100%{transform:translateY(0px) rotate(0deg)} 
           50%{transform:translateY(-15px) rotate(2deg)} 
@@ -129,7 +179,6 @@ export function Home() {
           100%{transform:translateX(10px);opacity:0} 
         }
 
-        /* NAVBAR - LIQUID GLASS */
         .lc-nav { 
           position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem;
           display:flex; justify-content:space-between; align-items:center;
@@ -162,7 +211,6 @@ export function Home() {
         }
         .lc-nav-cta:hover { background: rgba(14, 184, 208, 0.25); border-color: rgba(14, 184, 208, 0.5); transform: translateY(-2px); }
 
-        /* HERO CON PARALLAX Y FONDO PERSONALIZADO */
         .lc-hero {
           min-height: 100vh;
           display: flex;
@@ -172,7 +220,6 @@ export function Home() {
           overflow: hidden;
         }
 
-        /* IMAGEN DE FONDO CON EFECTO PARALLAX */
         .parallax-bg {
           position: absolute;
           top: 0;
@@ -189,7 +236,6 @@ export function Home() {
           transition: transform 0.1s ease-out;
         }
 
-        /* CAPA OSCURA SOBRE LA IMAGEN */
         .hero-overlay {
           position: absolute;
           top: 0;
@@ -200,7 +246,6 @@ export function Home() {
           z-index: 1;
         }
 
-        /* ELIMINADO .lc-grid - YA NO HAY RAYAS AZULES */
         .lc-glow { position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(14,184,208,.1) 0%,transparent 70%);animation:lcGlowPulse 4s ease-in-out infinite;z-index:1;pointer-events:none; }
         .lc-car-bg { position:absolute;bottom:0;right:-2%;font-size:300px;line-height:1;opacity:.05;animation:lcFloatCar 6s ease-in-out infinite;pointer-events:none;z-index:1; }
         .lc-hero-content { position:relative;z-index:2;text-align:center;padding:2rem;max-width:850px; }
@@ -210,7 +255,6 @@ export function Home() {
         .lc-hero p { font-size:1.05rem;color:rgba(255,255,255,.6);margin-bottom:2rem;line-height:1.75;animation:lcFadeUp .8s .3s ease both; }
         .lc-hero-btns { display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:lcFadeUp .8s .45s ease both; }
         
-        /* BOTONES LIQUID GLASS MÁS TRANSPARENTES */
         .lc-btn-primary { 
           background: rgba(14, 184, 208, 0.1); 
           backdrop-filter: blur(8px); 
@@ -252,109 +296,301 @@ export function Home() {
         .lc-hours-value { font-size:0.85rem; font-weight:600; }
         .lc-hours-divider { width:1px; height:25px; background:rgba(255,255,255,0.2); }
 
-        /* STATS - LIQUID GLASS */
         .lc-stats { background:rgba(255,255,255,.03); backdrop-filter: blur(8px); border-top:1px solid rgba(255,255,255,.07); border-bottom:1px solid rgba(255,255,255,.07); padding:2.5rem 4rem; display:flex; justify-content:center; gap:5rem; flex-wrap:wrap; }
         .lc-stat { text-align:center; }
         .lc-stat-num { font-family:'Sora',sans-serif;font-size:2rem;font-weight:600;color:#0eb8d0; }
         .lc-stat-label { font-size:.75rem;color:rgba(255,255,255,.4);margin-top:.25rem;letter-spacing:.06em; }
 
-        /* SECCIONES */
         .lc-section { padding:6rem 2rem; max-width:1100px; margin:0 auto; position:relative; z-index:2; }
         .lc-tag { display:inline-block;background:rgba(14,184,208,.1);color:#0eb8d0;padding:.3rem .9rem;border-radius:6px;font-size:.75rem;margin-bottom:1rem;letter-spacing:.06em; }
         .lc-section-title { font-size:2.2rem;font-weight:600;margin-bottom:.8rem;line-height:1.2; }
         .lc-section-sub { color:rgba(255,255,255,.5);font-size:.95rem;line-height:1.75;max-width:520px; }
 
-        /* TARJETAS DE SERVICIOS */
-        .lc-service-card {
-          background: rgba(17, 24, 39, 0.7);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(14, 184, 208, 0.15);
-          border-radius: 20px;
-          padding: 1.75rem;
-          transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        /* Fondo de la sección de servicios con slideshow */
+.services-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.services-bg-slideshow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.services-bg-slideshow .slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.services-bg-slideshow .slide.active {
+  opacity: 1;
+}
+
+.services-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1;
+}
+
+.services-section .lc-section {
+  position: relative;
+  z-index: 2;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* TARJETAS DE SERVICIOS MÁS ANGOSTAS */
+.lc-service-card {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  padding: 0.8rem;
+  transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.lc-service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.5));
+  border-radius: 20px;
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+.lc-service-card:hover::before {
+  background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+}
+
+.lc-service-card > div, 
+.lc-service-card > .lc-svc-name, 
+.lc-service-card > .lc-svc-price, 
+.lc-service-card > .lc-svc-desc,
+.lc-service-card > .lc-svc-time {
+  position: relative;
+  z-index: 2;
+}
+
+.lc-service-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 35px -12px rgba(14, 184, 208, 0.3);
+}
+
+/* GRID CON TARJETAS ESTRECHAS */
+.lc-services-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+  gap: 0.8rem; 
+  margin-top: 2rem;
+  padding: 0 2rem;
+}
+
+.lc-svc-name { 
+  font-family: 'Sora', sans-serif; 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  margin-bottom: 0.2rem; 
+  color: #fff; 
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5); 
+}
+
+.lc-svc-price { 
+  font-family: 'Sora', sans-serif; 
+  font-size: 1rem; 
+  font-weight: 700; 
+  color: #0eb8d0; 
+  margin-bottom: 0.3rem; 
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
+}
+
+.lc-svc-desc { 
+  font-size: 0.65rem; 
+  color: rgba(255, 255, 255, 0.9); 
+  line-height: 1.35; 
+  margin-bottom: 0.3rem; 
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
+}
+
+.lc-svc-time { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0.2rem; 
+  margin-top: 0.3rem; 
+  font-size: 0.6rem; 
+  color: rgba(255, 255, 255, 0.9); 
+  background: rgba(0,0,0,0.5); 
+  padding: 0.2rem 0.5rem; 
+  border-radius: 99px; 
+  width: fit-content; 
+}
+
+/* Responsive para móvil */
+@media (max-width: 768px) {
+  .services-section .lc-section {
+    max-width: 100%;
+    padding: 3rem 1rem;
+  }
+  
+  .lc-services-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+  gap: 0.6rem; 
+  margin-top: 2rem;
+  padding: 0 3rem;
+}
+  
+  .lc-service-card {
+    padding: 0.7rem;
+    min-height: 160px;
+  }
+  
+  .lc-svc-name { font-size: 0.9rem; }
+  .lc-svc-price { font-size: 1rem; }
+  .lc-svc-desc { font-size: 0.7rem; }
+  .lc-svc-time { font-size: 0.65rem; }
+}
+        /* ========== SECCIÓN DE OPINIONES REDISEÑADA ========== */
+        .opiniones-section {
           position: relative;
+          padding: 5rem 2rem;
           overflow: hidden;
-          cursor: pointer;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
-        .lc-service-card::before {
-          content: '';
+
+        .opiniones-bg {
           position: absolute;
           top: 0;
           left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(circle at 30% 20%, rgba(14, 184, 208, 0.1), transparent);
-          opacity: 0;
-          transition: opacity 0.5s ease;
+          width: 100%;
+          height: 100%;
+          background-image: url('/fondo-opiniones.jpg');
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
+          z-index: 0;
         }
-        .lc-service-card:hover {
-          border-color: rgba(14, 184, 208, 0.6);
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 25px 40px -15px rgba(14, 184, 208, 0.3);
+
+        .opiniones-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 1;
         }
-        .lc-service-card:hover::before { opacity: 1; }
-        .lc-service-card:hover .lc-svc-icon { transform: scale(1.1) rotate(3deg); }
 
-        .lc-services-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1.5rem; margin-top:3rem; }
-        .lc-svc-icon { font-size:2.2rem; margin-bottom:1rem; transition:transform 0.3s ease; }
-        .lc-svc-name { font-family:'Sora',sans-serif; font-size:1rem; font-weight:500; margin-bottom:.4rem; }
-        .lc-svc-price { font-family:'Sora',sans-serif; font-size:1.5rem; font-weight:600; color:#0eb8d0; margin-bottom:.6rem; }
-        .lc-svc-desc { font-size:.84rem; color:rgba(255,255,255,.5); line-height:1.6; }
-        .lc-svc-time { display:inline-flex; align-items:center; gap:.3rem; margin-top:1rem; font-size:.74rem; color:rgba(255,255,255,.35); background:rgba(255,255,255,.05); padding:.3rem .75rem; border-radius:99px; }
+        .opiniones-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 1rem;
+          margin-top: 2rem;
+          position: relative;
+          z-index: 2;
+          justify-content: center;
+        }
 
-        /* BOOKING - LIQUID GLASS */
-        .lc-booking { background:rgba(17, 24, 39, 0.4); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.07); border-radius:24px; padding:4rem; margin:4rem auto; max-width:1100px; position:relative; overflow:hidden; z-index:2; }
-        .lc-booking-glow { position:absolute; top:-30%; right:-10%; width:400px; height:400px; background:radial-gradient(circle,rgba(14,184,208,.08) 0%,transparent 70%); pointer-events:none; }
-        .lc-booking-grid { position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
-        .lc-steps { display:flex; flex-direction:column; gap:1.25rem; margin-top:2rem; }
-        .lc-step { display:flex; align-items:flex-start; gap:1rem; transition:transform 0.3s ease; cursor:pointer; }
-        .lc-step:hover { transform:translateX(5px); }
-        .lc-step-num { width:32px; height:32px; border-radius:50%; background:rgba(14,184,208,0.2); border:1px solid rgba(14,184,208,0.4); display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:600; color:#0eb8d0; transition:all 0.3s ease; }
-        .lc-step:hover .lc-step-num { transform:scale(1.1); background:rgba(14,184,208,0.4); }
-        .lc-step-title { font-size:.9rem; font-weight:500; margin-bottom:.2rem; }
-        .lc-step-desc { font-size:.8rem; color:rgba(255,255,255,.45); line-height:1.5; }
-        .lc-booking-visual { background:rgba(255,255,255,.03); border-radius:16px; padding:2rem; text-align:center; transition:all 0.3s ease; }
-        .lc-booking-visual:hover { transform:translateY(-5px); border-color:rgba(14,184,208,.3); }
-        .lc-big-icon { font-size:5rem; display:block; margin-bottom:1rem; animation:lcFloatIcon 3s ease-in-out infinite; }
-
-        /* QUICK LINKS - LIQUID GLASS */
-        .lc-ql-card {
-          background: rgba(17, 24, 39, 0.7);
+        .opinion-card {
+          background: rgba(20, 25, 45, 0.1);
           backdrop-filter: blur(12px);
-          border: 1px solid rgba(14, 184, 208, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 20px;
-          padding: 2rem;
+          padding: 1rem;
           transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
           cursor: pointer;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
-        .lc-ql-card:hover {
-          border-color: rgba(14, 184, 208, 0.6);
+
+        .opinion-card:hover {
           transform: translateY(-8px);
-          box-shadow: 0 20px 35px -10px rgba(14, 184, 208, 0.3);
+          border-color: rgba(14, 184, 208, 0.5);
+          box-shadow: 0 20px 35px -12px rgba(14, 184, 208, 0.25);
+          background: rgba(20, 25, 45, 0.6);
         }
-        .lc-ql-card:hover .lc-ql-icon { transform: scale(1.1) rotate(3deg); }
-        .lc-ql-card:hover .lc-ql-arrow { transform: translateX(8px); color: #0eb8d0; }
-        .lc-ql-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5rem; margin-top:3rem; }
-        .lc-ql-icon { font-size:2rem; transition:transform 0.3s ease; }
-        .lc-ql-title { font-family:'Sora',sans-serif; font-size:1rem; font-weight:500; }
-        .lc-ql-desc { font-size:.82rem; color:rgba(255,255,255,.45); line-height:1.5; }
-        .lc-ql-arrow { margin-top:auto; color:#0eb8d0; font-size:.82rem; transition:transform 0.3s ease; }
 
-        /* REVIEWS */
-        .lc-reviews-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; margin-top:3rem; }
-        .lc-review { background:rgba(17, 24, 39, 0.6); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:1.75rem; transition:all 0.4s ease; cursor:pointer; }
-        .lc-review:hover { transform:translateY(-5px); border-color:rgba(14,184,208,.4); box-shadow:0 20px 35px -12px rgba(14,184,208,0.2); }
-        .lc-stars { color:#f59e0b; font-size:1rem; margin-bottom:1rem; }
-        .lc-review-text { font-size:.88rem; color:rgba(255,255,255,.6); line-height:1.7; margin-bottom:1.25rem; font-style:italic; }
-        .lc-reviewer { display:flex; align-items:center; gap:.75rem; }
-        .lc-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#1a6fd4,#0eb8d0); display:flex; align-items:center; justify-content:center; font-size:.82rem; font-weight:600; transition:transform 0.3s ease; }
-        .lc-review:hover .lc-avatar { transform:scale(1.1); }
-        .lc-rev-name { font-size:.88rem; font-weight:500; }
-        .lc-rev-date { font-size:.74rem; color:rgba(255,255,255,.35); }
+        .opinion-stars {
+          color: #f59e0b;
+          font-size: 1.1rem;
+          margin-bottom: 1rem;
+          letter-spacing: 2px;
+        }
 
-        /* FOOTER */
+        .opinion-text {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.6;
+          margin-bottom: 1.5rem;
+          font-style: italic;
+        }
+
+        .opinion-author {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 1rem;
+        }
+
+        .opinion-avatar {
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #6aa4ef, #06094b);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          font-weight: 600;
+          color: white;
+          transition: transform 0.3s ease;
+        }
+
+        .opinion-card:hover .opinion-avatar {
+          transform: scale(1.05);
+        }
+
+        .opinion-author-info {
+          flex: 1;
+        }
+
+        .opinion-name {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: #fff;
+          margin-bottom: 0.2rem;
+        }
+
+        .opinion-date {
+          font-size: 0.7rem;
+          color: rgba(255, 255, 255, 0.5);
+        }
+
         .lc-footer { background:rgba(6, 10, 20, 0.8); backdrop-filter:blur(10px); border-top:1px solid rgba(255,255,255,.06); padding:3rem 2rem; text-align:center; }
         .lc-footer-logo { font-family:'Sora',sans-serif; font-size:1.4rem; font-weight:600; margin-bottom:.4rem; }
         .lc-footer-sub { font-size:.82rem; color:rgba(255,255,255,.35); margin-bottom:2rem; }
@@ -363,12 +599,8 @@ export function Home() {
         .lc-footer-links button:hover { color:#0eb8d0; transform:translateY(-2px); }
         .lc-footer-copy { font-size:.75rem; color:rgba(255,255,255,.18); }
 
-        .lc-menu-bg { background:rgba(255,255,255,.02); border-top:1px solid rgba(255,255,255,.06); padding:6rem 2rem; position:relative; z-index:2; }
-
-        /* CONTACTO */
         #contacto { position:relative; z-index:2; }
 
-        /* ANIMACIONES SCROLL */
         .lc-reveal { opacity:0; transform:translateY(28px); transition:opacity .7s ease,transform .7s ease; }
         .lc-reveal.lc-visible { opacity:1; transform:translateY(0); }
 
@@ -382,15 +614,16 @@ export function Home() {
           .lc-nav-links { display:none; }
           .lc-hero h1{font-size:2.2rem;}
           .lc-stats{gap:2.5rem;padding:2rem 1.5rem;}
-          .lc-booking-grid{grid-template-columns:1fr;}
-          .lc-booking{padding:2.5rem 1.5rem;}
           .lc-section{padding:4rem 1.25rem;}
           .lc-hours-card{scale:0.9;}
+          .lc-services-grid { grid-template-columns:1fr; }
+          .opiniones-grid { grid-template-columns:1fr; gap:1.2rem; }
+          .opinion-card { padding:1.3rem; }
+          .opiniones-section { padding:3rem 1.25rem; }
         }
       `}</style>
 
       <div className="lc-root">
-        {/* NAVBAR */}
         <nav
           className="lc-nav"
           id="lc-navbar"
@@ -406,7 +639,6 @@ export function Home() {
           </div>
           <ul className="lc-nav-links">
             <li><a href="#servicios" onClick={(e) => { e.preventDefault(); document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' }) }}>Servicios</a></li>
-            <li><a href="#nosotros" onClick={(e) => { e.preventDefault(); document.getElementById('nosotros')?.scrollIntoView({ behavior: 'smooth' }) }}>Nosotros</a></li>
             <li><a href="#opiniones" onClick={(e) => { e.preventDefault(); document.getElementById('opiniones')?.scrollIntoView({ behavior: 'smooth' }) }}>Opiniones</a></li>
             <li><a href="#contacto" onClick={(e) => { e.preventDefault(); document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }) }}>Contacto</a></li>
           </ul>
@@ -415,7 +647,6 @@ export function Home() {
           </button>
         </nav>
 
-        {/* HERO CON PARALLAX - SIN RAYAS AZULES */}
         <section className="lc-hero" id="hero-section">
           <div className="parallax-bg" id="hero-parallax-bg"></div>
           <div className="hero-overlay"></div>
@@ -450,7 +681,6 @@ export function Home() {
           </div>
         </section>
 
-        {/* STATS */}
         <div className="lc-stats">
           <div className="lc-stat">
             <div className="lc-stat-num" id="counter-clientes">0</div>
@@ -470,8 +700,19 @@ export function Home() {
           </div>
         </div>
 
-        {/* SERVICIOS */}
-        <section id="servicios">
+        {/* SECCIÓN DE SERVICIOS CON SLIDESHOW DE FONDO */}
+        <section id="servicios" className="services-section">
+          <div className="services-bg-slideshow">
+            {bgImages.map((img, index) => (
+              <div 
+                key={index}
+                className={`slide ${currentBgIndex === index ? 'active' : ''}`}
+                style={{ backgroundImage: `url(${img})` }}
+              />
+            ))}
+            <div className="services-bg-overlay"></div>
+          </div>
+          
           <div className="lc-section">
             <div className="lc-reveal">
               <span className="lc-tag">NUESTROS SERVICIOS</span>
@@ -479,116 +720,68 @@ export function Home() {
               <p className="lc-section-sub">Cada servicio está pensado para devolverle el brillo y la limpieza que tu auto merece.</p>
             </div>
             <div className="lc-services-grid">
-              {[
-                { icon: '🚿', name: 'Lavado Básico', value: 'basico', price: '$10', desc: 'Lavado exterior con agua a presión, shampoo especial y secado manual.', time: '30 min' },
-                { icon: '✨', name: 'Lavado Completo', value: 'completo', price: '$20', desc: 'Interior y exterior. Aspirado, tablero, vidrios y limpieza de llantas.', time: '45 min' },
-                { icon: '🌟', name: 'Encerado + Lavado', value: 'encerado', price: '$35', desc: 'Lavado completo más encerado profesional para proteger y dar brillo a la pintura.', time: '60 min' },
-                { icon: '🧼', name: 'Limpieza de Tapizado', value: 'tapizado', price: '$25', desc: 'Limpieza profunda de asientos y alfombras con extractora profesional.', time: '40 min' },
-              ].map((s) => (
-                <div key={s.name} className="lc-service-card lc-reveal" onClick={() => navigate(`/agendar?servicio=${s.value}`)}>
-                  <div className="lc-svc-icon">{s.icon}</div>
+              {services.map((s) => (
+                <div 
+                  key={s.name} 
+                  className="lc-service-card lc-reveal" 
+                  onClick={() => navigate(`/agendar?servicio=${s.value}`)}
+                  style={{ backgroundImage: `url(${s.bgImage})` }}
+                >
                   <div className="lc-svc-name">{s.name}</div>
                   <div className="lc-svc-price">{s.price}</div>
                   <div className="lc-svc-desc">{s.desc}</div>
-                  <div className="lc-svc-time">⏱ {s.time}</div>
+                  <div className="lc-svc-time">{s.time}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* BOOKING */}
-        <div className="lc-booking">
-          <div className="lc-booking-glow" />
-          <div className="lc-booking-grid">
-            <div className="lc-reveal">
-              <span className="lc-tag">RESERVA EN LÍNEA</span>
-              <h2 className="lc-section-title" style={{ fontSize: '1.9rem' }}>Agendá tu cita en<br />menos de 2 minutos</h2>
-              <div className="lc-steps">
-                <div className="lc-step">
-                  <div className="lc-step-num">1</div>
-                  <div><div className="lc-step-title">Seleccioná tu servicio</div><div className="lc-step-desc">Elegí entre nuestros 4 servicios según lo que necesita tu vehículo.</div></div>
-                </div>
-                <div className="lc-step">
-                  <div className="lc-step-num">2</div>
-                  <div><div className="lc-step-title">Elegí fecha y hora</div><div className="lc-step-desc">Ve los horarios disponibles en tiempo real y reservá el que más te convenga.</div></div>
-                </div>
-                <div className="lc-step">
-                  <div className="lc-step-num">3</div>
-                  <div><div className="lc-step-title">Confirmación instantánea</div><div className="lc-step-desc">Recibís confirmación inmediata y podés ver tus citas con tu número de teléfono.</div></div>
-                </div>
+        {/* SECCIÓN DE OPINIONES REDISEÑADA */}
+        <section id="opiniones" className="opiniones-section">
+  <div className="opiniones-bg"></div>
+  <div className="opiniones-overlay"></div>
+  
+  <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+    <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <span className="lc-tag">OPINIONES</span>
+      <h2 className="lc-section-title">Lo que dicen nuestros clientes</h2>
+      <p className="lc-section-sub" style={{ margin: '0 auto' }}>Opiniones reales de nuestros clientes</p>
+    </div>
+    
+    <div className="opiniones-grid">
+      {loadingTestimonials ? (
+        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem' }}>Cargando opiniones...</div>
+      ) : testimonials.length === 0 ? (
+        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem', color: 'rgba(255,255,255,.5)' }}>No hay opiniones aún. ¡Sé el primero en opinar!</div>
+      ) : (
+        testimonials.map((testimonial) => (
+          <div key={testimonial.id} className="opinion-card">
+            <div className="opinion-stars">
+              {"★".repeat(testimonial.rating || 5)}
+            </div>
+            <div className="opinion-text">"{testimonial.comment}"</div>
+            <div className="opinion-author">
+              <div className="opinion-avatar">
+                {testimonial.customer_name?.charAt(0) || 'C'}
               </div>
-              <button className="lc-btn-primary" style={{ marginTop: '2rem' }} onClick={() => navigate('/agendar')}>Agendar mi cita ahora</button>
-            </div>
-            <div className="lc-booking-visual lc-reveal">
-              <span className="lc-big-icon">🚗</span>
-              <div style={{ fontFamily: "'Sora',sans-serif", fontSize: '1.1rem', fontWeight: 500, marginBottom: '.5rem' }}>Rápido. Fácil. Confiable.</div>
-              <div style={{ fontSize: '.85rem', color: 'rgba(255,255,255,.4)', marginBottom: '1.5rem' }}>Sin filas, sin esperas. Reservá desde donde estés.</div>
+              <div className="opinion-author-info">
+                <div className="opinion-name">{testimonial.customer_name || 'Cliente'}</div>
+                <div className="opinion-date">{new Date(testimonial.created_at).toLocaleDateString('es-CR')}</div>
+              </div>
             </div>
           </div>
-        </div>
+        ))
+      )}
+    </div>
+    
+    <div style={{ textAlign: 'center', marginTop: '3rem' }} className="lc-reveal">
+      <button className="lc-btn-outline" onClick={() => navigate('/opiniones')}>Ver todas las opiniones</button>
+    </div>
+  </div>
+</section>
 
-        {/* OPINIONES */}
-        <section id="opiniones" style={{ padding: '6rem 2rem' }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="lc-reveal">
-              <span className="lc-tag">OPINIONES</span>
-              <h2 className="lc-section-title">Lo que dicen nuestros clientes</h2>
-            </div>
-            <div className="lc-reviews-grid">
-              {loadingTestimonials ? (
-                <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem' }}>Cargando opiniones...</div>
-              ) : testimonials.length === 0 ? (
-                <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '2rem', color: 'rgba(255,255,255,.5)' }}>No hay opiniones aún. ¡Sé el primero en opinar!</div>
-              ) : (
-                testimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="lc-review">
-                    <div className="lc-stars">{"★".repeat(testimonial.rating || 5)}</div>
-                    <div className="lc-review-text">"{testimonial.comment}"</div>
-                    <div className="lc-reviewer">
-                      <div className="lc-avatar">{testimonial.customer_name?.charAt(0) || 'C'}</div>
-                      <div>
-                        <div className="lc-rev-name">{testimonial.customer_name || 'Cliente'}</div>
-                        <div className="lc-rev-date">{new Date(testimonial.created_at).toLocaleDateString('es-CR')}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div style={{ textAlign: 'center', marginTop: '2.5rem' }} className="lc-reveal">
-              <button className="lc-btn-outline" onClick={() => navigate('/opiniones')}>Ver todas las opiniones</button>
-            </div>
-          </div>
-        </section>
-
-        {/* QUICK LINKS (EXPLORA) */}
-        <section className="lc-menu-bg" id="nosotros">
-          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="lc-reveal">
-              <span className="lc-tag">EXPLORA</span>
-              <h2 className="lc-section-title">Todo lo que necesitás</h2>
-              <p className="lc-section-sub">Accedé rápidamente a todas las secciones del sitio.</p>
-            </div>
-            <div className="lc-ql-grid">
-              {[
-                { icon: '📅', title: 'Agendar Cita', desc: 'Reservá tu espacio y elegí el servicio que necesitás.', arrow: 'Reservar ahora', action: '/agendar' },
-                { icon: '📋', title: 'Mis Citas', desc: 'Consultá tus citas agendadas con tu número de teléfono.', arrow: 'Consultar citas', action: '/agendar?tab=history' },
-                { icon: '📞', title: 'Contacto', desc: 'WhatsApp, teléfono o correo. Respondemos rápido.', arrow: 'Contactar', action: '/contacto' },
-                { icon: '⭐', title: 'Opiniones', desc: 'Lo que dicen nuestros clientes sobre su experiencia.', arrow: 'Ver opiniones', action: '/opiniones' },
-              ].map((ql) => (
-                <div key={ql.title} className="lc-ql-card lc-reveal" onClick={() => navigate(ql.action)}>
-                  <div className="lc-ql-icon">{ql.icon}</div>
-                  <div className="lc-ql-title">{ql.title}</div>
-                  <div className="lc-ql-desc">{ql.desc}</div>
-                  <div className="lc-ql-arrow">→ {ql.arrow}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CONTACTO - COMPLETO CON MAPA */}
+        {/* SECCIÓN DE CONTACTO COMPLETA */}
         <section id="contacto" style={{ padding: '5rem 2rem', background: '#0a0e1a', borderTop: '1px solid rgba(255,255,255,.06)' }}>
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>
             <div className="lc-reveal" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
@@ -597,14 +790,13 @@ export function Home() {
               <p className="lc-section-sub" style={{ margin: '0 auto' }}>Estamos aquí para ayudarte</p>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
               <div>
                 <div style={{ background: 'rgba(17, 24, 39, 0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden', marginBottom: '1.5rem' }}>
                   <div style={{ background: 'linear-gradient(135deg,#0f1e3a,#0a0e1a)', padding: '0.8rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
                     <p style={{ fontSize: '0.75rem', color: '#0eb8d0', letterSpacing: '0.06em', fontWeight: 500 }}>INFORMACIÓN DE CONTACTO</p>
                   </div>
                   <div style={{ padding: '1.25rem' }}>
-                    {/* DIRECCIÓN */}
                     <div 
                       style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent' }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
@@ -620,7 +812,6 @@ export function Home() {
                       </div>
                     </div>
                     
-                    {/* WHATSAPP 1 */}
                     <a 
                       href="https://wa.me/50683606680"
                       target="_blank"
@@ -638,7 +829,6 @@ export function Home() {
                       </div>
                     </a>
 
-                    {/* WHATSAPP 2 */}
                     <a 
                       href="https://wa.me/50689594947"
                       target="_blank"
@@ -656,7 +846,6 @@ export function Home() {
                       </div>
                     </a>
                     
-                    {/* CORREO */}
                     <a 
                       href="mailto:lavacar@gmail.com"
                       style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
@@ -672,7 +861,6 @@ export function Home() {
                       </div>
                     </a>
                     
-                    {/* HORARIO */}
                     <div 
                       style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.5rem', borderRadius: '12px', transition: 'all 0.3s ease', background: 'transparent' }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.1)'; e.currentTarget.style.transform = 'translateX(5px)' }}
@@ -689,7 +877,6 @@ export function Home() {
                   </div>
                 </div>
 
-                {/* GOOGLE MAPS */}
                 <div 
                   style={{ background: 'rgba(17, 24, 39, 0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '20px', overflow: 'hidden', transition: 'all 0.3s ease', cursor: 'pointer' }}
                   onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(14,184,208,0.4)' }}
@@ -714,13 +901,12 @@ export function Home() {
                       onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,.25)'; e.currentTarget.style.color = '#fff' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,.15)'; e.currentTarget.style.color = '#0eb8d0' }}
                     >
-                      🗺️ Abrir en Google Maps
+                      Abrir en Google Maps
                     </button>
                   </div>
                 </div>
               </div>
               
-              {/* CTA FINAL */}
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <div 
                   style={{ 
@@ -743,28 +929,6 @@ export function Home() {
                   onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 30px -10px rgba(14,184,208,.1)' }}
                 >
                   <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '180px', height: '180px', background: 'radial-gradient(circle, rgba(14,184,208,.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
-                  
-                  <div 
-                    style={{ 
-                      fontSize: '6rem', 
-                      marginBottom: '1rem', 
-                      display: 'inline-block',
-                      animation: 'lcCarFloat 2s ease-in-out infinite, lcCarGlow 3s ease-in-out infinite',
-                      filter: 'drop-shadow(0 10px 15px rgba(14,184,208,0.3))',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.animation = 'lcCarFloat 0.3s ease-in-out infinite, lcCarGlow 0.5s ease-in-out infinite'; e.currentTarget.style.transform = 'scale(1.05)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.animation = 'lcCarFloat 2s ease-in-out infinite, lcCarGlow 3s ease-in-out infinite'; e.currentTarget.style.transform = 'scale(1)' }}
-                  >
-                    🚗
-                  </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} style={{ width: '20px', height: '2px', background: 'linear-gradient(90deg, #0eb8d0, transparent)', animation: `lcLineMove 1.5s ease-in-out infinite`, animationDelay: `${i * 0.15}s`, opacity: 0.6 }} />
-                    ))}
-                  </div>
                   
                   <h3 style={{ 
                     fontFamily: "'Sora',sans-serif", 
@@ -795,20 +959,18 @@ export function Home() {
                       width: '100%', 
                       fontSize: '1rem', 
                       transition: 'all 0.3s ease',
-                      position: 'relative',
-                      overflow: 'hidden',
                       boxShadow: '0 4px 15px rgba(14,184,208,0.3)'
                     }}
                     onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(14,184,208,0.6)' }}
                     onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(14,184,208,0.3)' }}
                     onClick={() => navigate('/agendar')}
                   >
-                    📅 Agendar mi cita ahora
+                    Agendar mi cita ahora
                   </button>
                   
                   <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,.3)', marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                    <span>✓ Sin tarjeta</span>
-                    <span>✓ Sin registro</span>
+                    <span>Sin tarjeta</span>
+                    <span>Sin registro</span>
                   </div>
                 </div>
               </div>
@@ -816,10 +978,9 @@ export function Home() {
           </div>
         </section>
         
-        {/* FOOTER */}
         <footer className="lc-footer">
           <div className="lc-footer-logo">Autolavado y Servicios Camaro Fraterno</div>
-          <div className="lc-footer-sub">Bagaces, Guanacaste, Costa Rica | 📞 8360-6680 | 8959-4947</div>
+          <div className="lc-footer-sub">Bagaces, Guanacaste, Costa Rica | 8360-6680 | 8959-4947</div>
           <div className="lc-footer-links">
             <button onClick={() => navigate('/agendar')}>Agendar</button>
             <button onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}>Servicios</button>
@@ -830,10 +991,8 @@ export function Home() {
         </footer>
       </div>
 
-      {/* SCRIPT PARA EL EFECTO PARALLAX */}
       <script dangerouslySetInnerHTML={{
         __html: `
-          // Efecto parallax para el HERO
           const heroSection = document.getElementById('hero-section');
           const parallaxBg = document.getElementById('hero-parallax-bg');
           
