@@ -9,6 +9,8 @@ import { Opiniones } from './components/Opiniones'
 import { ClienteAuth } from './pages/ClienteAuth'
 import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
+import { CompleteProfile } from './pages/CompleteProfile'
+import { AuthCallback } from './pages/AuthCallback'
 
 // Componente para rutas protegidas
 function RutaProtegida({ children }: { children: React.ReactNode }) {
@@ -318,7 +320,7 @@ function NavBar() {
         <div className="navbar-container">
           <Link to="/" className="navbar-logo" onClick={cerrarMenu}>
             <div className="navbar-logo-text">
-              Autolavado Camaro Fraterno<span className="navbar-logo-dot"></span>
+              Autolavado Camaro Fraterno
             </div>
           </Link>
 
@@ -432,6 +434,8 @@ function App() {
             <Route path="/registro" element={<Navigate to="/acceder" replace />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/completar-perfil" element={<CompleteProfile />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>
         </div>
       </AuthProvider>
