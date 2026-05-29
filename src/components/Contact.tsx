@@ -411,8 +411,8 @@ export function Contact() {
                 <p>INFORMACIÓN DE CONTACTO</p>
               </div>
               <div className="ct-items">
-                {/* Dirección */}
-                <div className="ct-item" onClick={() => window.open('https://maps.google.com/?q=Bagaces+Guanacaste+Costa+Rica', '_blank')}>
+                {/* Dirección con coordenadas exactas */}
+                <div className="ct-item" onClick={() => window.open('https://www.google.com/maps?q=10.5218292,-85.2548688', '_blank')}>
                   <div className="ct-item-icon">📍</div>
                   <div>
                     <div className="ct-item-label">DIRECCIÓN</div>
@@ -470,7 +470,7 @@ export function Contact() {
               </div>
             </div>
 
-            {/* Columna derecha - Mapa y ubicación */}
+            {/* Columna derecha - Mapa y ubicación con coordenadas exactas */}
             <div className="ct-card">
               <div className="ct-card-header">
                 <p>UBICACIÓN</p>
@@ -478,18 +478,18 @@ export function Contact() {
               <div className="ct-items">
                 <div className="ct-iframe">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15716.123456789!2d-85.2548091!3d10.5218901!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDMxJzE4LjgiTiA4NcKwMTUnMTcuMyJX!5e0!3m2!1ses!2scr!4v1234567890"
+                    src="https://www.google.com/maps?q=10.5218292,-85.2548688&output=embed"
                     width="100%"
                     height="200"
-                    style={{ border: 0 }}
+                    style={{ border: 0, borderRadius: '16px' }}
                     allowFullScreen
                     loading="lazy"
-                    title="Google Maps - Bagaces, Guanacaste"
+                    title="Google Maps - Autolavado Camaro Fraterno, Bagaces"
                   />
                 </div>
                 <button
                   className="ct-maps-btn"
-                  onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Bagaces+Guanacaste+Costa+Rica', '_blank')}
+                  onClick={() => window.open('https://www.google.com/maps?q=10.5218292,-85.2548688', '_blank')}
                 >
                   Abrir en Google Maps
                 </button>

@@ -764,7 +764,7 @@ export function Home() {
 
           <div className="lc-hero-content" style={{ paddingBottom: '3rem' }}>
             <h1>Autolavado y Servicios<br /><span>Camaro Fraterno</span></h1>
-            <p>Lavado profesional, encerado y limpieza de tapizado.</p>
+            <p>Lavado profesional, encerado y limpieza de tapizado.<br />Agendá tu cita en segundos.</p>
             
             <div className="lc-hours-card" style={{ marginBottom: '2rem' }}>
               <div className="lc-hours-item">
@@ -930,7 +930,7 @@ export function Home() {
                     style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.8rem', padding: '0.4rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent' }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
-                    onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Bagaces+Guanacaste+Costa+Rica', '_blank')}
+                    onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218292,-85.2548688', '_blank')}
                   >
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(14,184,208,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ fontSize: '1rem' }}>📍</span>
@@ -976,7 +976,7 @@ export function Home() {
                   </a>
                   
                   <a 
-                    href="mailto:lavacar@gmail.com"
+                    href="mailto:camarofraterno@gmail.com"
                     style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.8rem', padding: '0.4rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s ease', background: 'transparent', textDecoration: 'none' }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.15)'; e.currentTarget.style.transform = 'translateX(5px)' }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)' }}
@@ -986,7 +986,7 @@ export function Home() {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}>CORREO</div>
-                      <div style={{ fontSize: '0.8rem', color: '#0eb8d0' }}>lavacar@gmail.com</div>
+                      <div style={{ fontSize: '0.8rem', color: '#0eb8d0' }}>camarofraterno@gmail.com</div>
                     </div>
                   </a>
                   
@@ -1024,16 +1024,16 @@ export function Home() {
                 </div>
                 <div style={{ padding: '0.8rem' }}>
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15716.123456789!2d-85.2548091!3d10.5218901!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDMxJzE4LjgiTiA4NcKwMTUnMTcuMyJX!5e0!3m2!1ses!2scr!4v1234567890"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3928.123456789!2d-85.2548688!3d10.5218292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2scr!4v1234567890"
                     width="100%"
                     height="180"
                     style={{ border: 0, borderRadius: '12px' }}
                     allowFullScreen
                     loading="lazy"
-                    title="Google Maps"
+                    title="Google Maps - Autolavado Camaro Fraterno, Bagaces"
                   />
                   <button
-                    onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Bagaces+Guanacaste+Costa+Rica', '_blank')}
+                    onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=10.5218292,-85.2548688', '_blank')}
                     style={{ width: '90%', margin: '0 auto', display: 'block', marginTop: '0.8rem', background: 'rgba(14,184,208,0.2)', color: '#0eb8d0', border: '1px solid rgba(14,184,208,0.3)', padding: '0.5rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 500, fontSize: '0.75rem', transition: 'all .2s' }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.3)'; e.currentTarget.style.color = '#fff' }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,184,208,0.2)'; e.currentTarget.style.color = '#0eb8d0' }}
