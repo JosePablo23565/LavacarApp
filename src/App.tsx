@@ -84,7 +84,6 @@ function NavBar() {
           font-family: 'DM Sans', sans-serif;
           background: rgba(10, 14, 26, 0.3);
           backdrop-filter: blur(12px);
-          /* ELIMINÉ EL border-bottom DE AQUÍ */
         }
 
         .navbar-modern.scrolled {
@@ -194,12 +193,11 @@ function NavBar() {
           visibility: visible;
         }
 
-        /* MENÚ LIQUID GLASS CON EFECTO REBOTE */
         .nav-menu {
           position: fixed;
           top: 75px;
           right: 24px;
-          width: 320
+          width: 320px;
           background: rgba(15, 20, 35, 0.35);
           backdrop-filter: blur(24px) saturate(180%);
           border-radius: 32px;
@@ -368,7 +366,7 @@ function NavBar() {
           .nav-menu {
             top: 68px;
             right: 12px;
-            width: 300
+            width: 300px;
           }
           .nav-menu::before {
             right: 18px;
@@ -468,29 +466,40 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <div className="min-h-screen">
-          <NavBar />
           <Routes>
             <Route path="/" element={
               <RutaProtegida>
-                <Home />
+                <>
+                  <NavBar />
+                  <Home />
+                </>
               </RutaProtegida>
             } />
             
             <Route path="/agendar" element={
               <RutaProtegida>
-                <AppointmentForm />
+                <>
+                  <NavBar />
+                  <AppointmentForm />
+                </>
               </RutaProtegida>
             } />
             
             <Route path="/contacto" element={
               <RutaProtegida>
-                <Contact />
+                <>
+                  <NavBar />
+                  <Contact />
+                </>
               </RutaProtegida>
             } />
             
             <Route path="/opiniones" element={
               <RutaProtegida>
-                <Opiniones />
+                <>
+                  <NavBar />
+                  <Opiniones />
+                </>
               </RutaProtegida>
             } />
             
