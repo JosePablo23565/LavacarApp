@@ -39,6 +39,25 @@ export function Opiniones() {
     setLoading(false)
   }
 
+  // Función para validar solo letras en el nombre y máximo 40 caracteres
+  const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    // Solo permitir letras, espacios, acentos y ñ
+    const onlyLetters = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+    // Limitar a 40 caracteres
+    if (onlyLetters.length <= 40) {
+      setFormData({ ...formData, nombre: onlyLetters })
+    }
+  }
+
+  // Función para validar máximo 100 caracteres en el comentario
+  const handleComentarioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value
+    if (value.length <= 100) {
+      setFormData({ ...formData, comentario: value })
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -280,6 +299,22 @@ export function Opiniones() {
         textarea.input-field {
           min-height: 100px;
           resize: vertical;
+        }
+
+        /* Contador de caracteres */
+        .char-counter {
+          text-align: right;
+          font-size: 0.65rem;
+          color: rgba(255, 255, 255, 0.4);
+          margin-top: 0.3rem;
+        }
+
+        .char-counter.near-limit {
+          color: #f59e0b;
+        }
+
+        .char-counter.limit {
+          color: #f87171;
         }
 
         /* Rating stars - EFECTO BURBUJA */
@@ -599,10 +634,11 @@ export function Opiniones() {
                     className="input-field"
                     type="text"
                     value={formData.nombre}
-                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                    onChange={handleNombreChange}
                     onFocus={() => setFocusedField('nombre')}
                     onBlur={() => setFocusedField(null)}
                     placeholder="Su nombre completo"
+                    maxLength={40}
                     required
                   />
                 </div>
@@ -628,12 +664,16 @@ export function Opiniones() {
                   <textarea
                     className="input-field"
                     value={formData.comentario}
-                    onChange={(e) => setFormData({ ...formData, comentario: e.target.value })}
+                    onChange={handleComentarioChange}
                     onFocus={() => setFocusedField('comentario')}
                     onBlur={() => setFocusedField(null)}
                     placeholder="Cuéntenos su experiencia con nuestro servicio..."
+                    maxLength={100}
                     required
                   />
+                  <div className={`char-counter ${formData.comentario.length >= 90 ? (formData.comentario.length >= 100 ? 'limit' : 'near-limit') : ''}`}>
+                    {formData.comentario.length}/100 caracteres
+                  </div>
                 </div>
 
                 <button type="submit" className="submit-btn" disabled={enviando}>

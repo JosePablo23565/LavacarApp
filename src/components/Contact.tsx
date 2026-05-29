@@ -5,9 +5,8 @@ export function Contact() {
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
         .ct-root {
-          min-height: 100vh;
           background: linear-gradient(135deg, #0a0e1a 0%, #0a1225 50%, #0a0e1a 100%);
-          padding: 3rem 1.5rem;
+          padding: 2rem 1.5rem;
           font-family: 'Inter', sans-serif;
           position: relative;
           overflow-x: hidden;
@@ -46,7 +45,7 @@ export function Contact() {
 
         .ct-header {
           text-align: center;
-          margin-bottom: 3rem;
+          margin-bottom: 2rem;
         }
 
         .ct-icon-circle {
@@ -97,7 +96,6 @@ export function Contact() {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 1.5rem;
-          margin-bottom: 2rem;
         }
 
         /* LIQUID GLASS CARDS */
@@ -168,7 +166,6 @@ export function Contact() {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.2rem;
           flex-shrink: 0;
           transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
@@ -272,74 +269,6 @@ export function Contact() {
           transform: scale(0.97);
         }
 
-        /* CTA CARD LIQUID GLASS */
-        .ct-cta-card {
-          background: rgba(15, 20, 35, 0.35);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 28px;
-          padding: 2rem;
-          text-align: center;
-          transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          margin-top: 1.5rem;
-        }
-
-        .ct-cta-card:hover {
-          transform: translateY(-6px);
-          border-color: rgba(14, 184, 208, 0.3);
-          box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-        }
-
-        .ct-cta-title {
-          font-family: 'Sora', sans-serif;
-          font-size: 1.3rem;
-          font-weight: 600;
-          margin-bottom: 1rem;
-          color: #fff;
-        }
-
-        .ct-cta-button {
-          background: linear-gradient(135deg, #0eb8d0, #0a8ca0);
-          color: #fff;
-          border: none;
-          padding: 0.9rem 2.2rem;
-          border-radius: 50px;
-          font-size: 0.9rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-family: 'Sora', sans-serif;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .ct-cta-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s ease;
-        }
-
-        .ct-cta-button:hover::before {
-          left: 100%;
-        }
-
-        .ct-cta-button:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 10px 30px rgba(14, 184, 208, 0.4);
-        }
-
-        .ct-cta-button:active {
-          transform: scale(0.97);
-        }
-
         /* LINKS */
         a {
           text-decoration: none;
@@ -348,6 +277,9 @@ export function Contact() {
         .ct-email-link {
           color: #0eb8d0;
           transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
         }
 
         .ct-email-link:hover {
@@ -357,7 +289,7 @@ export function Contact() {
 
         @media (max-width: 768px) {
           .ct-root {
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
           }
           .ct-grid {
             grid-template-columns: 1fr;
@@ -374,20 +306,12 @@ export function Contact() {
             width: 32px;
             height: 32px;
           }
-          .ct-cta-title {
-            font-size: 1.1rem;
-          }
-          .ct-cta-button {
-            padding: 0.7rem 1.5rem;
-            font-size: 0.85rem;
-          }
           .ct-item {
             padding: 0.8rem;
           }
           .ct-item-icon {
             width: 40px;
             height: 40px;
-            font-size: 1rem;
           }
         }
       `}</style>
@@ -413,16 +337,26 @@ export function Contact() {
               <div className="ct-items">
                 {/* Dirección con coordenadas exactas */}
                 <div className="ct-item" onClick={() => window.open('https://www.google.com/maps?q=10.5218292,-85.2548688', '_blank')}>
-                  <div className="ct-item-icon">📍</div>
+                  <div className="ct-item-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0eb8d0" strokeWidth="1.5">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </div>
                   <div>
                     <div className="ct-item-label">DIRECCIÓN</div>
                     <div className="ct-item-value">Bagaces, Guanacaste, Costa Rica</div>
                   </div>
                 </div>
 
-                {/* WhatsApp - Número 1 */}
+                {/* WhatsApp - Número 1 con logo */}
                 <div className="ct-item">
-                  <div className="ct-item-icon">📱</div>
+                  <div className="ct-item-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#25d366" strokeWidth="1.5">
+                      <path d="M21.5 12C21.5 17.5 17 22 11.5 22C9.5 22 7.5 21.5 6 20.5L2 22L3.5 18C2.5 16.5 2 14.5 2 12.5C2 7 6.5 2.5 12 2.5C17.5 2.5 21.5 6.5 21.5 12Z" />
+                      <path d="M8 8.5C8.5 10 9.5 11.5 11 12.5L12.5 11.5C13 11 13.5 11 14 11.5L15.5 13.5C16 14 15.5 14.5 15 15C14 16 12 16.5 10.5 15.5C9 14.5 7.5 12.5 8 8.5Z" />
+                    </svg>
+                  </div>
                   <div>
                     <div className="ct-item-label">WHATSAPP 1</div>
                     <div className="ct-item-value">
@@ -434,9 +368,14 @@ export function Contact() {
                   </div>
                 </div>
 
-                {/* WhatsApp - Número 2 */}
+                {/* WhatsApp - Número 2 con logo */}
                 <div className="ct-item">
-                  <div className="ct-item-icon">📱</div>
+                  <div className="ct-item-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#25d366" strokeWidth="1.5">
+                      <path d="M21.5 12C21.5 17.5 17 22 11.5 22C9.5 22 7.5 21.5 6 20.5L2 22L3.5 18C2.5 16.5 2 14.5 2 12.5C2 7 6.5 2.5 12 2.5C17.5 2.5 21.5 6.5 21.5 12Z" />
+                      <path d="M8 8.5C8.5 10 9.5 11.5 11 12.5L12.5 11.5C13 11 13.5 11 14 11.5L15.5 13.5C16 14 15.5 14.5 15 15C14 16 12 16.5 10.5 15.5C9 14.5 7.5 12.5 8 8.5Z" />
+                    </svg>
+                  </div>
                   <div>
                     <div className="ct-item-label">WHATSAPP 2</div>
                     <div className="ct-item-value">
@@ -448,20 +387,32 @@ export function Contact() {
                   </div>
                 </div>
 
-                {/* Correo */}
+                {/* Correo con logo */}
                 <div className="ct-item">
-                  <div className="ct-item-icon">✉️</div>
+                  <div className="ct-item-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0eb8d0" strokeWidth="1.5">
+                      <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" />
+                      <path d="M22 6L12 13L2 6" />
+                    </svg>
+                  </div>
                   <div>
                     <div className="ct-item-label">CORREO</div>
                     <div className="ct-item-value">
-                      <a href="mailto:camarofraterno@gmail.com" className="ct-email-link">camarofraterno@gmail.com</a>
+                      <a href="mailto:camarofraterno@gmail.com" className="ct-email-link">
+                        camarofraterno@gmail.com
+                      </a>
                     </div>
                   </div>
                 </div>
 
                 {/* Horario */}
                 <div className="ct-item">
-                  <div className="ct-item-icon">⏰</div>
+                  <div className="ct-item-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0eb8d0" strokeWidth="1.5">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </div>
                   <div>
                     <div className="ct-item-label">HORARIO</div>
                     <div className="ct-item-value">Lunes a Sábado: 8am - 6pm</div>
@@ -495,17 +446,6 @@ export function Contact() {
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* CTA final */}
-          <div className="ct-cta-card">
-            <h3 className="ct-cta-title">¿Listo para que su auto brille?</h3>
-            <button 
-              className="ct-cta-button"
-              onClick={() => window.location.href = '/agendar'}
-            >
-              Agendar mi cita ahora
-            </button>
           </div>
         </div>
       </div>

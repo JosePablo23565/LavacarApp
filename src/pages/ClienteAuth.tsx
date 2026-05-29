@@ -47,10 +47,24 @@ export function ClienteAuth() {
     }
   }
 
+  // Nueva función para validar solo letras, espacios, tildes y ñ
+  const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    // Solo permite: letras (mayúsculas/minúsculas), espacios, acentos y ñ
+    const onlyLetters = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+    setRegNombre(onlyLetters)
+  }
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     
+    // Validar que el nombre solo contenga letras y espacios
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(regNombre)) {
+      setError('El nombre solo puede contener letras y espacios')
+      return
+    }
+
     if (regPassword !== regConfirmPassword) {
       setError('Las contraseñas no coinciden')
       return
@@ -490,12 +504,15 @@ export function ClienteAuth() {
                   <label>Nombre completo</label>
                   <input
                     type="text"
-                    placeholder="Tu nombre"
+                    placeholder="Ej: Carlos Pérez"
                     className="input-field"
                     value={regNombre}
-                    onChange={(e) => setRegNombre(e.target.value)}
+                    onChange={handleNombreChange}
                     required
                   />
+                  <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.2rem' }}>
+                    Solo letras, espacios y acentos
+                  </div>
                 </div>
 
                 <div className="input-group">

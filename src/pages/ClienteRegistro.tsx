@@ -373,16 +373,23 @@ export function ClienteRegistro() {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Nombre completo</label>
-            <input
-              type="text"
-              placeholder="Tu nombre"
-              className="input-field"
-              value={formData.nombre}
-              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-              required
-            />
-          </div>
+  <label>Nombre completo</label>
+  <input
+    type="text"
+    placeholder="Tu nombre"
+    className="input-field"
+    value={formData.nombre}
+    onChange={(e) => {
+      // Solo permite letras, espacios, acentos y ñ
+      const onlyLetters = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+      setFormData({ ...formData, nombre: onlyLetters })
+    }}
+    required
+  />
+  <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.2rem' }}>
+    Solo letras, espacios y acentos
+  </div>
+</div>
 
           <div className="input-group">
             <label>Correo electrónico</label>
