@@ -22,7 +22,7 @@ export function ProductCatalog() {
               target="_blank"
               className="inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
             >
-              📲 Comprar por WhatsApp
+               Comprar por WhatsApp
             </a>
           </div>
         ))}
