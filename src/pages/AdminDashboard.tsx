@@ -3,11 +3,11 @@ import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import { swalConfirm, swalSuccess, swalError } from '../utils/swalConfig'
 
-
 type Appointment = {
   id: number
   customer_name: string
   customer_phone: string
+  email: string
   service_type: string
   vehicle_type: string
   vehicle_model: string
@@ -140,8 +140,6 @@ export function AdminDashboard() {
     }
   }
 
-
-
   const getServiceLabel = (type: string) => {
     const services: Record<string, string> = {
       basico: 'Lavado Básico',
@@ -198,6 +196,7 @@ export function AdminDashboard() {
   const filteredAppointments = appointments.filter(a =>
     a.customer_name.toLowerCase().includes(search.toLowerCase()) ||
     a.customer_phone.includes(search) ||
+    a.email?.toLowerCase().includes(search.toLowerCase()) ||
     a.vehicle_model?.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -325,94 +324,6 @@ export function AdminDashboard() {
           color: #6ee7b7;
         }
         
-        .search-input {
-          width: 100%;
-          padding: 1rem 1rem 1rem 2.5rem;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          color: white;
-          outline: none;
-          transition: all 0.2s;
-        }
-        
-        .search-input:focus {
-          border-color: #0eb8d0;
-          box-shadow: 0 0 0 3px rgba(14, 184, 208, 0.15);
-        }
-        
-        .search-input::placeholder {
-          color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .stat-card {
-          background: #111827;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 20px;
-          padding: 1.5rem;
-          text-align: center;
-          transition: all 0.2s;
-        }
-        
-        .stat-card:hover {
-          border-color: rgba(14, 184, 208, 0.3);
-          transform: translateY(-2px);
-        }
-        
-        .stat-number {
-          font-size: 2rem;
-          font-weight: bold;
-          color: #0eb8d0;
-          margin: 0;
-        }
-        
-        .stat-label {
-          font-size: 0.7rem;
-          color: #94a3b8;
-          margin: 0.35rem 0 0 0;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        
-        /* TABS MODERNOS - MISMO ESTILO QUE AppointmentForm */
-        .af-tabs {
-          display: flex;
-          gap: 0.75rem;
-          margin-bottom: 2rem;
-          background: rgba(10, 14, 26, 0.3);
-          backdrop-filter: blur(16px);
-          border-radius: 20px;
-          padding: 0.5rem;
-          border: 1px solid rgba(14, 184, 208, 0.2);
-        }
-        
-        .af-tab {
-          flex: 1;
-          padding: 0.75rem;
-          border-radius: 14px;
-          font-weight: 500;
-          font-size: 0.9rem;
-          cursor: pointer;
-          border: none;
-          transition: all 0.3s ease;
-          font-family: 'Inter', sans-serif;
-          background: transparent;
-          color: rgba(255, 255, 255, 0.6);
-          text-align: center;
-        }
-        
-        .af-tab.active {
-          background: linear-gradient(135deg, rgba(14, 184, 208, 0.2), rgba(14, 184, 208, 0.1));
-          color: #0eb8d0;
-          border: 1px solid rgba(14, 184, 208, 0.3);
-          transform: translateY(-2px);
-        }
-        
-        .af-tab:not(.active):hover {
-          background: rgba(255, 255, 255, 0.05);
-          color: rgba(255, 255, 255, 0.9);
-        }
-        
         .stats-row {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -489,7 +400,43 @@ export function AdminDashboard() {
           border-color: rgba(14, 184, 208, 0.3);
         }
 
-
+        .af-tabs {
+          display: flex;
+          gap: 0.75rem;
+          margin-bottom: 2rem;
+          background: rgba(10, 14, 26, 0.3);
+          backdrop-filter: blur(16px);
+          border-radius: 20px;
+          padding: 0.5rem;
+          border: 1px solid rgba(14, 184, 208, 0.2);
+        }
+        
+        .af-tab {
+          flex: 1;
+          padding: 0.75rem;
+          border-radius: 14px;
+          font-weight: 500;
+          font-size: 0.9rem;
+          cursor: pointer;
+          border: none;
+          transition: all 0.3s ease;
+          font-family: 'Inter', sans-serif;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.6);
+          text-align: center;
+        }
+        
+        .af-tab.active {
+          background: linear-gradient(135deg, rgba(14, 184, 208, 0.2), rgba(14, 184, 208, 0.1));
+          color: #0eb8d0;
+          border: 1px solid rgba(14, 184, 208, 0.3);
+          transform: translateY(-2px);
+        }
+        
+        .af-tab:not(.active):hover {
+          background: rgba(255, 255, 255, 0.05);
+          color: rgba(255, 255, 255, 0.9);
+        }
       `}</style>
 
       <div className="admin-root">
@@ -535,7 +482,7 @@ export function AdminDashboard() {
                 <span className="search-bare-icon">🔍</span>
                 <input
                   type="text"
-                  placeholder="nombre, teléfono o vehículo..."
+                  placeholder="nombre, teléfono, correo o vehículo..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -552,6 +499,7 @@ export function AdminDashboard() {
                         <div>
                           <p className="font-semibold text-white text-base">{apt.customer_name}</p>
                           <p className="text-sm text-white/50 mt-0.5">{apt.customer_phone}</p>
+                          <p className="text-xs text-white/40 mt-0.5 break-all">{apt.email}</p>
                         </div>
                         <div className="flex gap-2">
                           <button onClick={() => deleteAppointment(apt.id)} className="text-red-400 hover:text-red-300 text-lg px-2 py-1 transition">🗑️</button>
@@ -595,6 +543,7 @@ export function AdminDashboard() {
                       <tr>
                         <th>Cliente</th>
                         <th>Teléfono</th>
+                        <th>Correo</th>
                         <th>Vehículo</th>
                         <th>Modelo</th>
                         <th>Servicio</th>
@@ -606,13 +555,14 @@ export function AdminDashboard() {
                     <tbody>
                       {filteredAppointments.length === 0 ? (
                         <tr>
-                          <td colSpan={8} style={{ textAlign: 'center', padding: '2.5rem', color: 'rgba(255,255,255,0.4)' }}>No hay citas registradas</td>
+                          <td colSpan={9} style={{ textAlign: 'center', padding: '2.5rem', color: 'rgba(255,255,255,0.4)' }}>No hay citas registradas</td>
                         </tr>
                       ) : (
                         filteredAppointments.map((apt) => (
                           <tr key={apt.id}>
                             <td style={{ fontWeight: '500' }}>{apt.customer_name}</td>
                             <td>{apt.customer_phone}</td>
+                            <td style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{apt.email}</td>
                             <td>{getVehicleLabel(apt.vehicle_type)}</td>
                             <td>{apt.vehicle_model || '—'}</td>
                             <td>{getServiceLabel(apt.service_type)}</td>
@@ -624,7 +574,7 @@ export function AdminDashboard() {
                                 <a href={`https://wa.me/${apt.customer_phone}?text=Hola%20${apt.customer_name}%2C%20tu%20cita%20del%20${formatDateDisplay(apt.appointment_date)}%20a%20las%20${convertTo12Hour(apt.appointment_time)}%20está%20confirmada.`} target="_blank" className="btn-success">💬</a>
                               </div>
                             </td>
-                           </tr>
+                          </tr>
                         ))
                       )}
                     </tbody>

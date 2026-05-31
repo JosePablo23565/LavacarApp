@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
@@ -222,10 +222,13 @@ function CustomSelect({ value, onChange, options, placeholder, label }: CustomSe
 }
 
 export function AppointmentForm() {
+  const navigate = useNavigate()
   const location = useLocation()
   const [step, setStep] = useState<'form' | 'history'>('form')
   const [animating, setAnimating] = useState(false)
   const [menuAbiertoGlobal, setMenuAbiertoGlobal] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
+  const [userId, setUserId] = useState('')
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_phone: '',
@@ -262,6 +265,30 @@ export function AppointmentForm() {
     '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
     '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM',
   ]
+
+  // Verificar autenticación al cargar
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        alert('Debes iniciar sesión para agendar una cita')
+        navigate('/acceder')
+      }
+    }
+    checkAuth()
+  }, [navigate])
+
+  // Obtener usuario logueado
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserEmail(user.email || '')
+        setUserId(user.id)
+      }
+    }
+    getUser()
+  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -400,17 +427,50 @@ export function AppointmentForm() {
     e.preventDefault()
     if (!formData.appointment_time) { alert('Por favor seleccioná una hora'); return }
     setLoading(true)
-    const { error } = await supabase.from('appointments').insert([{ ...formData, appointment_time: convertTo24Hour(formData.appointment_time) }])
+    
+    // Verificar que el usuario está logueado
+    if (!userId || !userEmail) {
+      alert('Error: No se pudo identificar al usuario. Por favor inicia sesión nuevamente.')
+      setLoading(false)
+      navigate('/acceder')
+      return
+    }
+    
+    const { error } = await supabase.from('appointments').insert([{ 
+      ...formData, 
+      appointment_time: convertTo24Hour(formData.appointment_time),
+      email: userEmail,
+      user_id: userId
+    }])
+    
     if (error) {
       alert('Error: ' + error.message)
     } else {
       const svc = services.find((s) => s.value === formData.service_type)
       const veh = vehicleTypes.find((v) => v.value === formData.vehicle_type)
-      setSuccessData({ show: true, name: formData.customer_name, date: formData.appointment_date, time: formData.appointment_time, service: svc?.label || formData.service_type, vehicleType: veh?.label || formData.vehicle_type, vehicleModel: formData.vehicle_model })
-      setFormData({ customer_name: '', customer_phone: '', service_type: '', vehicle_type: '', vehicle_model: '', appointment_date: new Date().toISOString().split('T')[0], appointment_time: '' })
+      setSuccessData({ 
+        show: true, 
+        name: formData.customer_name, 
+        date: formData.appointment_date, 
+        time: formData.appointment_time, 
+        service: svc?.label || formData.service_type, 
+        vehicleType: veh?.label || formData.vehicle_type, 
+        vehicleModel: formData.vehicle_model 
+      })
+      setFormData({ 
+        customer_name: '', 
+        customer_phone: '', 
+        service_type: '', 
+        vehicle_type: '', 
+        vehicle_model: '', 
+        appointment_date: new Date().toISOString().split('T')[0], 
+        appointment_time: '' 
+      })
       setSelectedDate(new Date())
       fetchAvailableTimes()
-      setTimeout(() => setSuccessData({ show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' }), 6000)
+      setTimeout(() => setSuccessData({ 
+        show: false, name: '', date: '', time: '', service: '', vehicleType: '', vehicleModel: '' 
+      }), 6000)
     }
     setLoading(false)
   }
