@@ -140,10 +140,7 @@ export function AdminDashboard() {
     }
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/acceder')
-  }
+
 
   const getServiceLabel = (type: string) => {
     const services: Record<string, string> = {
