@@ -9,6 +9,7 @@ import { ClienteLogin } from './pages/ClienteLogin'
 import { ClienteRegistro } from './pages/ClienteRegistro'
 import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
+import { CompletarPerfil } from './pages/CompletarPerfil'
 
 // Componente para rutas protegidas
 function RutaProtegida({ children }: { children: React.ReactNode }) {
@@ -521,6 +522,7 @@ function App() {
 
             <Route path="/acceder" element={<ClienteLogin />} />
             <Route path="/registro" element={<ClienteRegistro />} />
+            <Route path="/completar-perfil" element={<CompletarPerfil />} />
 
             <Route
               path="/admin"

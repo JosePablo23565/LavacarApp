@@ -7,6 +7,7 @@ export function ClienteRegistro() {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
+    telefono: '',
     password: '',
     confirmPassword: ''
   })
@@ -28,6 +29,11 @@ export function ClienteRegistro() {
       return
     }
 
+    if (formData.telefono.length < 8) {
+      setError('El teléfono debe tener al menos 8 dígitos')
+      return
+    }
+
     setIsFalling(true)
     setLoading(true)
 
@@ -36,7 +42,8 @@ export function ClienteRegistro() {
       password: formData.password,
       options: {
         data: {
-          nombre: formData.nombre
+          nombre: formData.nombre,
+          telefono: formData.telefono
         }
       }
     })
@@ -46,8 +53,8 @@ export function ClienteRegistro() {
       setIsFalling(false)
       setLoading(false)
     } else if (data.user) {
-      await supabase.from('perfiles').insert([
-        { id: data.user.id, nombre: formData.nombre, telefono: '' }
+      await supabase.from('perfiles').upsert([
+        { id: data.user.id, nombre: formData.nombre, telefono: formData.telefono, email: formData.email }
       ])
       setTimeout(() => {
         navigate('/')
@@ -61,7 +68,7 @@ export function ClienteRegistro() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: `${window.location.origin}/completar-perfil`
         }
       })
       if (error) {
@@ -95,7 +102,6 @@ export function ClienteRegistro() {
           overflow: hidden;
         }
 
-        /* FONDO CON TU IMAGEN */
         .register-page::before {
           content: '';
           position: absolute;
@@ -110,7 +116,6 @@ export function ClienteRegistro() {
           z-index: 0;
         }
 
-        /* CAPA OSCURA SUTIL */
         .register-page::after {
           content: '';
           position: absolute;
@@ -122,7 +127,6 @@ export function ClienteRegistro() {
           z-index: 0;
         }
 
-        /* TARJETA LIQUID GLASS */
         .liquid-glass-card {
           position: relative;
           z-index: 10;
@@ -373,23 +377,22 @@ export function ClienteRegistro() {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-  <label>Nombre completo</label>
-  <input
-    type="text"
-    placeholder="Tu nombre"
-    className="input-field"
-    value={formData.nombre}
-    onChange={(e) => {
-      // Solo permite letras, espacios, acentos y ñ
-      const onlyLetters = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
-      setFormData({ ...formData, nombre: onlyLetters })
-    }}
-    required
-  />
-  <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.2rem' }}>
-    Solo letras, espacios y acentos
-  </div>
-</div>
+            <label>Nombre completo</label>
+            <input
+              type="text"
+              placeholder="Tu nombre"
+              className="input-field"
+              value={formData.nombre}
+              onChange={(e) => {
+                const onlyLetters = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+                setFormData({ ...formData, nombre: onlyLetters })
+              }}
+              required
+            />
+            <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.2rem' }}>
+              Solo letras, espacios y acentos
+            </div>
+          </div>
 
           <div className="input-group">
             <label>Correo electrónico</label>
@@ -401,6 +404,27 @@ export function ClienteRegistro() {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
             />
+          </div>
+
+          <div className="input-group">
+            <label>Teléfono</label>
+            <input
+              type="tel"
+              placeholder="Ej: 88888888"
+              className="input-field"
+              value={formData.telefono}
+              onChange={(e) => {
+                const onlyNumbers = e.target.value.replace(/[^0-9]/g, '')
+                if (onlyNumbers.length <= 8) {
+                  setFormData({ ...formData, telefono: onlyNumbers })
+                }
+              }}
+              required
+              maxLength={8}
+            />
+            <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.2rem' }}>
+              8 dígitos, solo números
+            </div>
           </div>
 
           <div className="input-group">

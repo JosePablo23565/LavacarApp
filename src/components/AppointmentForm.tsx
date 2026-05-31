@@ -54,7 +54,6 @@ function CustomSelect({ value, onChange, options, placeholder, label }: CustomSe
     }, 200)
   }
 
-  // Cerrar al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
@@ -229,6 +228,7 @@ export function AppointmentForm() {
   const [menuAbiertoGlobal, setMenuAbiertoGlobal] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userId, setUserId] = useState('')
+  const [perfil, setPerfil] = useState({ nombre: '', telefono: '' })
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_phone: '',
@@ -288,6 +288,30 @@ export function AppointmentForm() {
       }
     }
     getUser()
+  }, [])
+
+  // Cargar perfil del usuario logueado
+  useEffect(() => {
+    const cargarPerfil = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data } = await supabase
+          .from('perfiles')
+          .select('nombre, telefono')
+          .eq('id', user.id)
+          .single()
+        
+        if (data) {
+          setPerfil(data)
+          setFormData(prev => ({
+            ...prev,
+            customer_name: data.nombre || '',
+            customer_phone: data.telefono || ''
+          }))
+        }
+      }
+    }
+    cargarPerfil()
   }, [])
 
   useEffect(() => {
@@ -354,7 +378,6 @@ export function AppointmentForm() {
     const horaActual = ahora.getHours()
     const minutosActual = ahora.getMinutes()
     
-    // Obtener horas ocupadas de la BD
     const { data } = await supabase
       .from('appointments')
       .select('appointment_time')
@@ -363,13 +386,10 @@ export function AppointmentForm() {
     const bookedTimes24h = data?.map(a => a.appointment_time) || []
     const bookedTimes12h = bookedTimes24h.map(t => convertTo12Hour(t))
     
-    // Filtrar horas ocupadas
     let available = allTimes.filter(time => !bookedTimes12h.includes(time))
     
-    // Si la fecha es hoy, filtrar horas pasadas
     if (dateStr === hoy) {
       available = available.filter(time => {
-        // Convertir hora 12h a 24h para comparar
         const [horaStr, modifier] = time.split(' ')
         let [hora, minuto] = horaStr.split(':')
         let hora24 = parseInt(hora)
@@ -377,7 +397,6 @@ export function AppointmentForm() {
         if (modifier === 'PM' && hora24 !== 12) hora24 += 12
         if (modifier === 'AM' && hora24 === 12) hora24 = 0
         
-        // Comparar con hora actual
         if (hora24 < horaActual) return false
         if (hora24 === horaActual && parseInt(minuto) <= minutosActual) return false
         return true
@@ -392,32 +411,6 @@ export function AppointmentForm() {
     setCustomerHistory(data || [])
   }
 
-  // Función para validar solo letras en el nombre y máximo 40 caracteres
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    const onlyLetters = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
-    if (onlyLetters.length <= 40) {
-      setFormData({ ...formData, customer_name: onlyLetters })
-    }
-  }
-
-  // Función para validar solo números en el teléfono (máximo 8 dígitos)
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    const onlyNumbers = value.replace(/[^0-9]/g, '')
-    if (onlyNumbers.length <= 8) {
-      setFormData({ ...formData, customer_phone: onlyNumbers })
-    }
-  }
-
-  // Función para validar marca y modelo (máximo 25 caracteres)
-  const handleVehicleModelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    if (value.length <= 25) {
-      setFormData({ ...formData, vehicle_model: value })
-    }
-  }
-
   const handleDateChange = (date: Date) => {
     setSelectedDate(date)
     setFormData({ ...formData, appointment_date: date.toISOString().split('T')[0], appointment_time: '' })
@@ -428,7 +421,6 @@ export function AppointmentForm() {
     if (!formData.appointment_time) { alert('Por favor seleccioná una hora'); return }
     setLoading(true)
     
-    // Verificar que el usuario está logueado
     if (!userId || !userEmail) {
       alert('Error: No se pudo identificar al usuario. Por favor inicia sesión nuevamente.')
       setLoading(false)
@@ -458,8 +450,8 @@ export function AppointmentForm() {
         vehicleModel: formData.vehicle_model 
       })
       setFormData({ 
-        customer_name: '', 
-        customer_phone: '', 
+        customer_name: perfil.nombre,
+        customer_phone: perfil.telefono,
         service_type: '', 
         vehicle_type: '', 
         vehicle_model: '', 
@@ -498,7 +490,6 @@ export function AppointmentForm() {
           font-family: 'Inter', sans-serif;
         }
 
-        /* TABS STICKY - LIQUID GLASS */
         .af-tabs {
           display: flex;
           gap: 0.75rem;
@@ -518,13 +509,6 @@ export function AppointmentForm() {
           z-index: 1;
           opacity: 0.3;
           pointer-events: none;
-        }
-
-        .af-tabs.sticky-shadow {
-          background: rgba(10, 14, 26, 0.85);
-          backdrop-filter: blur(20px);
-          border-color: rgba(14, 184, 208, 0.3);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .af-tab {
@@ -553,7 +537,6 @@ export function AppointmentForm() {
           color: rgba(255, 255, 255, 0.9);
         }
 
-        /* CARD PRINCIPAL - LIQUID GLASS */
         .af-card {
           background: rgba(15, 20, 35, 0.35);
           backdrop-filter: blur(20px);
@@ -602,7 +585,6 @@ export function AppointmentForm() {
           text-transform: uppercase;
         }
 
-        /* INPUTS NORMALES CON EFECTO BURBUJA */
         .af-input {
           width: 100%;
           padding: 0.85rem 1rem;
@@ -625,6 +607,12 @@ export function AppointmentForm() {
         .af-input:active {
           transform: scale(1.02);
           transition: transform 0.1s ease;
+        }
+
+        .af-input:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          background: rgba(255, 255, 255, 0.02);
         }
 
         .af-field {
@@ -656,7 +644,6 @@ export function AppointmentForm() {
           display: block;
         }
 
-        /* TIME GRID */
         .af-time-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -695,7 +682,6 @@ export function AppointmentForm() {
           transform: translateY(-2px);
         }
 
-        /* SUBMIT BUTTON */
         .af-submit {
           width: 100%;
           padding: 1rem;
@@ -742,7 +728,6 @@ export function AppointmentForm() {
           cursor: not-allowed;
         }
 
-        /* BUSCAR BUTTON */
         .af-buscar-btn {
           background: linear-gradient(135deg, #0eb8d0, #0a8ca0) !important;
           color: #fff !important;
@@ -765,7 +750,6 @@ export function AppointmentForm() {
           box-shadow: 0 8px 25px rgba(14, 184, 208, 0.4) !important;
         }
 
-        /* CUSTOM CALENDAR - LIQUID GLASS CON FECHAS DESHABILITADAS */
         .custom-calendar {
           background: rgba(10, 14, 26, 0.4) !important;
           backdrop-filter: blur(16px) !important;
@@ -857,7 +841,6 @@ export function AppointmentForm() {
           background: rgba(14, 184, 208, 0.2) !important;
         }
 
-        /* HISTORY CARDS */
         .af-history-card {
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 255, 255, 0.08);
@@ -891,7 +874,6 @@ export function AppointmentForm() {
           text-transform: uppercase;
         }
 
-        /* MODAL EXITO */
         .af-modal-overlay {
           position: fixed;
           inset: 0;
@@ -999,12 +981,9 @@ export function AppointmentForm() {
                       <input 
                         className="af-input" 
                         type="text" 
-                        name="customer_name" 
-                        value={formData.customer_name} 
-                        onChange={handleNameChange} 
-                        required 
-                        placeholder="Ej: Franklin Molina"
-                        maxLength={40}
+                        value={perfil.nombre || ''} 
+                        disabled
+                        placeholder="Cargando..."
                       />
                     </div>
 
@@ -1013,12 +992,9 @@ export function AppointmentForm() {
                       <input 
                         className="af-input" 
                         type="tel" 
-                        name="customer_phone" 
-                        value={formData.customer_phone} 
-                        onChange={handlePhoneChange} 
-                        required 
-                        placeholder="Ej: 12345678"
-                        maxLength={8}
+                        value={perfil.telefono || ''} 
+                        disabled
+                        placeholder="Cargando..."
                       />
                     </div>
 
@@ -1039,7 +1015,12 @@ export function AppointmentForm() {
                           type="text" 
                           name="vehicle_model" 
                           value={formData.vehicle_model} 
-                          onChange={handleVehicleModelChange} 
+                          onChange={(e) => {
+                            const value = e.target.value
+                            if (value.length <= 25) {
+                              setFormData({ ...formData, vehicle_model: value })
+                            }
+                          }} 
                           required 
                           placeholder="Ej: Toyota Hilux"
                           maxLength={25}
